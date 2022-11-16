@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 //import route
-app.use(router)
+app.use("/api",router)
 
 //Connect to db
 
