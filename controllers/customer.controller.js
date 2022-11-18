@@ -44,6 +44,7 @@ export const updateCustomer = async(req, res) => {
         } else {
             res.status(401).json({message : "Cannot find customer"});
         }
+
         
     }
     catch(err) {
