@@ -1,18 +1,19 @@
 import db from "../config/database.js";
-import Sequelize  from "Sequelize";
+import Sequelize  from "sequelize";
 
 const CustomerAdress = db.define(
     "customer_adress",
     {
-        customer_adressID : {
+        id : {
             type : Sequelize.UUID,
             defaultValue : Sequelize.UUIDV4,
-            primaryKey : true,
             allowNull : false,
+            primaryKey : true
         },
 
         customer_Address : {
             type : Sequelize.STRING,
+            defaultValue : "",
             allowNull : true,
         },
 
@@ -68,7 +69,7 @@ const CustomerAdress = db.define(
     {
         indexes : [{unique : true, fields : ["customer_UAVT", "customer_postal"]}],
         timestamps : false,
-        tablename : "Customers.Adress"
+        tablename : "customer_adresses"
     }
 );
 
