@@ -26,7 +26,7 @@ app.use("/api",router)
 
 try {
   await db.authenticate();
-  await db.sync({force: true});
+  await db.sync({alter: true});
   console.log('Connection has been established successfully.');
 }
 
