@@ -24,8 +24,6 @@ export const createCustomer = async (req, res) => {
     }
 
     catch(err) {
-        console.log(err);
-
         res.status(500).json({message: "An error occured."});
     }
      
@@ -48,7 +46,6 @@ export const updateCustomer = async(req, res) => {
         
     }
     catch(err) {
-        console.log(err);
         res.status(500).json({message : "An error occurred."})
     }
 }
