@@ -1,6 +1,7 @@
 import TaxInfo from "./taxinfo.model.js";
 import Customer from "./customer.model.js";
 import CustomerAdress from "./customerAdress.model.js";
+import Analyze from "./analyze.model.js"
 
 //Customer-TaxInfo
 Customer.hasOne(TaxInfo, {
@@ -14,4 +15,4 @@ Customer.hasOne(CustomerAdress, {
 
 
 
-export default {TaxInfo, Customer, CustomerAdress}
+export default {TaxInfo, Customer, CustomerAdress, Analyze}
