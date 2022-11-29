@@ -1,12 +1,14 @@
 import Analyze from "../models/analyze.model.js";
 
+
+//Done
 export const createAnalyse = async(req, res) => {
     
 
     try {
         const new_analyse = {...req.body};
 
-        let  _ = await Analyze.Create(new_analyse.analyze);
+        let  _ = await Analyze.create(new_analyse.analyze);
 
         res.status(200).json({message : "Analyze Created"})
     }
@@ -18,15 +20,16 @@ export const createAnalyse = async(req, res) => {
 
 }
 
+//Done
 export const updateAnalyze = async(req, res) => {
     try{
         const analyse = {...req.body};
 
-        if (await Analyze.FindOne({where : {
+        if (await Analyze.findOne({where : {
             analyze_id : analyse.analyze_id
         }})) {
-            let retval = await Analyze.Update(analyse.analyze,{where : {
-                analyse_id : analyse.analyze.id
+            let retval = await Analyze.update(analyse.analyze,{where : {
+                analyze_id : analyse.analyze_id
             }} )
 
             res.status(200).json({ message: "Analyze Updated"});
@@ -37,10 +40,12 @@ export const updateAnalyze = async(req, res) => {
     }
 
     catch(err) {
+        
         res.status(500).json({ message: "An error occurred." });
     }
 }
 
+//Done
 export const getAnalyse = async(req, res) => {
     const q = { ...req.body };
 
@@ -51,7 +56,7 @@ export const getAnalyse = async(req, res) => {
       }
     });
 
-    if (customer.length !== 0) {
+    if (analyze.length !== 0) {
       res.status(200).json({ analyze });
     } else {
       res.status(401).json({ message: "Cannot find any analyze" });
@@ -62,10 +67,12 @@ export const getAnalyse = async(req, res) => {
   }
 }
 
+
+//Done
 export const getAllAnalyze = async (req, res) => {
     try {
         const analyzes = await Analyze.findAll();
-        if (customers !== 0) {
+        if (analyzes !== 0) {
           res.status(200).json({ analyzes });
         } else {
           res.status(401).json({ message: "No Analyze found in database" });
@@ -76,6 +83,8 @@ export const getAllAnalyze = async (req, res) => {
       }
 }
 
+
+//Done
 export const deleteAnalyze = async(req, res) => {
     const cus = { ...req.body };
   try {
@@ -83,7 +92,7 @@ export const deleteAnalyze = async(req, res) => {
       where: { analyze_id: cus.analyze_id },
     });
     if (row) {
-        let retval = await TaxInfo.destroy({
+        let retval = await Analyze.destroy({
             where: {
                 analyze_id: cus.analyze_id,
             },
@@ -95,7 +104,7 @@ export const deleteAnalyze = async(req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res.send(500).json({ message: "An error ocurred" });
+    res.status(500).json({ message: "An error ocurred" });
   }
 }
 

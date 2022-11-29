@@ -6,6 +6,7 @@ const Analyze = db.define(
     {
         analyze_id : {
             type : Sequelize.UUID,
+            defaultValue : Sequelize.UUIDV4,
             primaryKey : true,
             allowNull : false
         },
@@ -14,7 +15,7 @@ const Analyze = db.define(
             allowNull : false
         },
 
-        anaylyze_coef : {
+        analyze_coef : {
             type : Sequelize.DECIMAL,
             allowNull : false
         },
