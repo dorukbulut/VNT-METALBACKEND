@@ -2,8 +2,16 @@ import TaxInfo from "./taxinfo.model.js";
 import Customer from "./customer.model.js";
 import CustomerAdress from "./customerAdress.model.js";
 import Analyze from "./analyze.model.js"
-
-//TODO DB REALATIONS
+import BracketBush from "./bracketBush.model.js";
+import Certificate from "./certificates.model.js";
+import DeliveryType from "./deliveryType.model.js";
+import PlateStrip from "./plate_strip.model.js";
+import QuotationForm from "./quotationForm.model.js";
+import QuotationItem from "./quotationItems.model.js";
+import RefIds from "./refIds.model.js";
+import SaleConfirmation from "./saleConfirmation.model.js";
+import WorkOrder from "./workOrders.model.js";
+import StraigthBush  from "./strBush.model.js";
 
 //Customer-TaxInfo
 Customer.hasOne(TaxInfo, {
@@ -15,8 +23,83 @@ Customer.hasOne(CustomerAdress, {
     foreignKey : "Customer_ID"
 });
 
+//Customer-QuotationItem
+Customer.hasMany(QuotationItem, {
+    foreignKey : "Customer_ID",
+})
+
+//QuotationItem-Analyze
+Analyze.hasMany(QuotationItem ,{
+    foreignKey : "Analyze_ID"
+})
+
+//QuotationItem-plate
+QuotationItem.hasOne(PlateStrip , {
+    foreignKey : "Item_ID"
+})
+//QuotationItem-strBush
+QuotationItem.hasOne(StraigthBush , {
+    foreignKey : "Item_ID"
+})
+
+//QuotationItemBracketBush
+QuotationItem.hasOne(BracketBush , {
+    foreignKey : "Item_ID"
+})
+
+//QuotationForm-QuotationItem
+QuotationForm.hasMany(QuotationItem, {
+    foreignKey : "Quotation_ID"
+})
+
+
+//Customer-QuotationForm
+Customer.hasMany(QuotationForm, {
+    foreignKey : "Customer_ID"
+});
+
+//Delivary-QuotationForm
+DeliveryType.hasMany(QuotationForm, {
+    foreignKey : "Delivery_ID"
+})
+
+//SaleConfirmation-QuotationForm
+QuotationForm.hasMany(SaleConfirmation, {
+    foreignKey :"Quotation_ID",
+
+})
+
+//SaleConfirmation-Certificates
+Certificate.hasMany(SaleConfirmation, {
+    foreignKey :"Certificate_ID",
+    
+})
+
+//Customer-SaleConfirmation
+Customer.hasMany(SaleConfirmation, {
+    foreignKey : "Customer_ID"
+});
+
+//SaleConfirmation-WorkOrder
+SaleConfirmation.hasOne(WorkOrder, {
+    foreignKey : "Sale_ID",
+})
+
+RefIds.hasOne(QuotationForm, {
+    foreignKey :"Reference_Number"
+})
+
+RefIds.hasOne(WorkOrder, {
+    foreignKey :"Reference_Number"
+})
+
+RefIds.hasOne(SaleConfirmation, {
+    foreignKey :"Reference_Number"
+})
 
 
 
 
-export default {TaxInfo, Customer, CustomerAdress, Analyze}
+
+
+export default {TaxInfo,RefIds,WorkOrder,StraigthBush,SaleConfirmation,QuotationItem, Customer, CustomerAdress, Analyze, BracketBush, Certificate, DeliveryType, PlateStrip, QuotationForm}

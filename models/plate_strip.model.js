@@ -27,4 +27,4 @@ const plateStrip = db.define(
     }
 );
 
-export default straightBush
+export default plateStrip

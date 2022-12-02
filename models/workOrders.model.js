@@ -12,11 +12,6 @@ const WorkOrders = db.define(
             allowNull : false,
         },
 
-        reference_Number : {
-            type : Sequelize.STRING,
-            allowNull : false,
-        },
-
         finalWeight : {
             type : Sequelize.DECIMAL,
             allowNull : false,
@@ -26,12 +21,10 @@ const WorkOrders = db.define(
     },
 
     {
-        
-        indexes : [{unique : true, fields : ["reference_Number"]}],
         timestamps : false,
        
     }
 ); 
 
 
-export default SaleConfirmation;
+export default WorkOrders;

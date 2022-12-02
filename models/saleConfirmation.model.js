@@ -12,17 +12,13 @@ const SaleConfirmation = db.define(
             allowNull : false,
         },
 
-        reference_Number : {
-            type : Sequelize.STRING,
-            allowNull : false,
-        }
 
 
     },
 
     {
         
-        indexes : [{unique : true, fields : ["reference_Number"]}],
+       
         timestamps : false,
        
     }

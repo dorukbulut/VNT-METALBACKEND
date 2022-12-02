@@ -1,7 +1,7 @@
 import db from "../config/database.js"
 import Sequelize  from "sequelize"
 
-const straightBush = db.define(
+const StraightBush = db.define(
     "straight_bush",
     {
         large_diameter : {
@@ -27,4 +27,4 @@ const straightBush = db.define(
     }
 );
 
-export default straightBush
+export default StraightBush;
