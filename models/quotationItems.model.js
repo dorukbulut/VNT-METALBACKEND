@@ -34,9 +34,18 @@ const QuotationItems = db.define(
             type : Sequelize.DECIMAL,
             allowNull : false
         },
+        deliveryTime : {
+            type : Sequelize.DECIMAL,
+            
+        },
         treatment_firm : {
             type : Sequelize.STRING,
             allowNull : false
+        },
+
+        description : {
+            type : Sequelize.STRING,
+            
         },
         euro : {
             type : Sequelize.DECIMAL,
@@ -47,8 +56,8 @@ const QuotationItems = db.define(
             type : Sequelize.DECIMAL,
             allowNull : false
         },
-        creadtedAt : {
-            type : Sequelize.DATEONLY,
+        createdAt : {
+            type : Sequelize.DATE,
             allowNull : false
         },
 

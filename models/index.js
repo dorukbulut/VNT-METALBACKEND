@@ -29,21 +29,25 @@ Customer.hasMany(QuotationItem, {
 })
 
 //QuotationItem-Analyze
-Analyze.hasMany(QuotationItem ,{
+QuotationItem.Analyze = Analyze.hasMany(QuotationItem ,{
     foreignKey : "Analyze_ID"
 })
 
+QuotationItem.belongsTo(Analyze, {
+    foreignKey : "Analyze_ID",
+});
+
 //QuotationItem-plate
-QuotationItem.hasOne(PlateStrip , {
+QuotationItem.PlateStrip = QuotationItem.hasOne(PlateStrip , {
     foreignKey : "Item_ID"
 })
 //QuotationItem-strBush
-QuotationItem.hasOne(StraigthBush , {
+QuotationItem.StraigthBush = QuotationItem.hasOne(StraigthBush , {
     foreignKey : "Item_ID"
 })
 
 //QuotationItemBracketBush
-QuotationItem.hasOne(BracketBush , {
+QuotationItem.BracketBush = QuotationItem.hasOne(BracketBush , {
     foreignKey : "Item_ID"
 })
 
