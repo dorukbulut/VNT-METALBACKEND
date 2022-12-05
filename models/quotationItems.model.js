@@ -12,27 +12,26 @@ const QuotationItems = db.define(
         },
         unit_frequence : {
             type : Sequelize.INTEGER,
-            allowNull : false
         },
         unit_price : {
             type : Sequelize.DECIMAL,
-            allowNull : false
+            
         },
         model_price : {
             type : Sequelize.DECIMAL,
-            allowNull : false
+            
         },
         treatment_price : {
             type : Sequelize.DECIMAL,
-            allowNull : false
+            
         },
         test_price : {
             type : Sequelize.DECIMAL,
-            allowNull : false
+            
         },
         alternativeSale_price : {
             type : Sequelize.DECIMAL,
-            allowNull : false
+            
         },
         deliveryTime : {
             type : Sequelize.DECIMAL,
@@ -40,7 +39,7 @@ const QuotationItems = db.define(
         },
         treatment_firm : {
             type : Sequelize.STRING,
-            allowNull : false
+            
         },
 
         description : {
@@ -49,16 +48,16 @@ const QuotationItems = db.define(
         },
         euro : {
             type : Sequelize.DECIMAL,
-            allowNull : false
+            
         },
 
         usd : {
             type : Sequelize.DECIMAL,
-            allowNull : false
+            
         },
         createdAt : {
             type : Sequelize.DATE,
-            allowNull : false
+            
         },
 
 

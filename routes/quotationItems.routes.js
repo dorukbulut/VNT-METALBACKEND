@@ -8,6 +8,7 @@ router.post("/get", quotationItemsController.getItems);
 router.get("/all", quotationItemsController.getAll);
 router.post("/update", quotationItemsController.updateItem);
 router.delete("/delete", quotationItemsController.deleteItem);
+router.post("/set-quotation", quotationItemsController.setQuotation);
 
 
 export default router;

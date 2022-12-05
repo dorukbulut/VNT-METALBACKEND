@@ -19,50 +19,50 @@ const DeliveryType = db.define(
 
         package_fee : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
 
         loading_fee : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
         delivery_fee : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
 
         export_fee : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
 
         terminal_fee_exit : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
         vehicleLoading_fee : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
 
         transport_fee : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
 
         insurance_fee : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
 
         terminal_fee_entry : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
 
         import_fee : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            defaultValue : 0
         },
 
 

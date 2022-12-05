@@ -12,50 +12,63 @@ const QuotationForm = db.define(
             allowNull : false,
         },
 
-        createdAt : {
-            type : Sequelize.DATEONLY,
-            allowNull : false,
+        day : {
+            type : Sequelize.INTEGER,
+            
+        },
+
+        month : {
+            type : Sequelize.INTEGER,
+            
+        },
+
+        year : {
+            type : Sequelize.INTEGER,
+            
         },
 
         customerInquiryNum : {
             type : Sequelize.STRING,
-            allowNull : false
+           
         },
 
         grand_total : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
+            
         },
 
         validityOfOffer : {
             type : Sequelize.STRING,
-            allowNull : false
+            
         },
         IncotermType : {
             type : Sequelize.STRING,
-            allowNull : false
+            
         },
         PaymentTerms : {
             type : Sequelize.STRING,
-            allowNull : false
+            
         },
 
         extraDetails : {
             type : Sequelize.STRING,
-            allowNull : false
+           
         },
 
         preparedBy : {
             type : Sequelize.STRING,
-            allowNull : false
+            
         },
 
         approvedBy : {
             type : Sequelize.STRING,
-            allowNull : false
+            
         },
 
-        
+        reference : {
+            type : Sequelize.STRING,
+            
+        }
 
 
     },

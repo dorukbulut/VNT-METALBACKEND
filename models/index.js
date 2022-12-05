@@ -8,7 +8,6 @@ import DeliveryType from "./deliveryType.model.js";
 import PlateStrip from "./plate_strip.model.js";
 import QuotationForm from "./quotationForm.model.js";
 import QuotationItem from "./quotationItems.model.js";
-import RefIds from "./refIds.model.js";
 import SaleConfirmation from "./saleConfirmation.model.js";
 import WorkOrder from "./workOrders.model.js";
 import StraigthBush  from "./strBush.model.js";
@@ -62,8 +61,16 @@ Customer.hasMany(QuotationForm, {
     foreignKey : "Customer_ID"
 });
 
+QuotationForm.belongsTo(Customer, {
+    foreignKey : "Customer_ID"
+})
+
 //Delivary-QuotationForm
 DeliveryType.hasMany(QuotationForm, {
+    foreignKey : "Delivery_ID"
+})
+
+QuotationForm.belongsTo(DeliveryType, {
     foreignKey : "Delivery_ID"
 })
 
@@ -89,21 +96,11 @@ SaleConfirmation.hasOne(WorkOrder, {
     foreignKey : "Sale_ID",
 })
 
-RefIds.hasOne(QuotationForm, {
-    foreignKey :"Reference_Number"
-})
-
-RefIds.hasOne(WorkOrder, {
-    foreignKey :"Reference_Number"
-})
-
-RefIds.hasOne(SaleConfirmation, {
-    foreignKey :"Reference_Number"
-})
 
 
 
 
 
 
-export default {TaxInfo,RefIds,WorkOrder,StraigthBush,SaleConfirmation,QuotationItem, Customer, CustomerAdress, Analyze, BracketBush, Certificate, DeliveryType, PlateStrip, QuotationForm}
+
+export default {TaxInfo,WorkOrder,StraigthBush,SaleConfirmation,QuotationItem, Customer, CustomerAdress, Analyze, BracketBush, Certificate, DeliveryType, PlateStrip, QuotationForm}
