@@ -8,6 +8,6 @@ router.post("/get", quotationFormController.getForms);
 router.get("/all", quotationFormController.getAllForms);
 router.post("/update", quotationFormController.updateForms);
 router.delete("/delete", quotationFormController.deleteForms);
-router.post("/generate", quotationFormController.generate);
+router.post("/generate", quotationFormController.generateExport);
 
 export default router;

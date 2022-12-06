@@ -222,7 +222,7 @@ export const setQuotation = async (req, res) => {
     let reti = await Models.QuotationItem.bulkCreate(
       items.all,
       {
-        updateOnDuplicate :["Quotation_ID", "deliveryTime", "description"]
+        updateOnDuplicate :["Quotation_ID", "deliveryTime", "description", "unit_price"]
       }
     );
     res.status(200).json({ message: "quotation is set for items."});

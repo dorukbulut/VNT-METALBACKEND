@@ -64,8 +64,13 @@ const DeliveryType = db.define(
             type : Sequelize.DECIMAL,
             defaultValue : 0
         },
-
-
+        
+        total : {
+            type : Sequelize.BIGINT,
+        },
+        description : {
+            type  : Sequelize.STRING
+        }
     },
 
     {
