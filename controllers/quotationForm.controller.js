@@ -1,6 +1,7 @@
 import Models from "../models/index.js";
 import axios from "axios";
 import Sequelize  from "sequelize";
+import GenerateQuotation from "../utils/generateQuotation.js";
 
 
 //TODO Generate Form Templates
@@ -47,6 +48,7 @@ export const createForm = async (req, res) => {
         })
         
         if(resl.status === 200)  {
+            GenerateQuotation();
             res.status(200).json({message : "ok"});
         }
         else {

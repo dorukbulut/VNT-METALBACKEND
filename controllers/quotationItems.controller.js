@@ -227,7 +227,7 @@ export const setQuotation = async (req, res) => {
     );
     res.status(200).json({ message: "quotation is set for items."});
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     res.status(500).json({ message: "An error occured." });
   }
 };
