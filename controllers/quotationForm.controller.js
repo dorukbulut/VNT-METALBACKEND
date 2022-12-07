@@ -83,6 +83,18 @@ export const generateExport = async (req, res) => {
       ],
     });
 
+    const serialCount = await Models.QuotationForm.findAll({
+      group: ["reference"],
+      attributes: [
+        "reference",
+        [Sequelize.fn("count", Sequelize.col("reference")), "Count"],
+      ],
+      where: {
+        reference: Data.dataValues.reference,
+      },
+    });
+    
+
     const new_form = {
         "Customer": Data.dataValues.customer.account_title,
         "Attention": Data.dataValues.customer.account_related,
@@ -127,7 +139,7 @@ export const generateExport = async (req, res) => {
         "extra_details" : Data.dataValues.extraDetails,
         "prepared_by" : Data.dataValues.preparedBy,
         "approved_by" : Data.dataValues.approvedBy,
-        "count" : parseInt(Data.dataValues.reference.split("-")[3]) - 1
+        "count" : serialCount[0].dataValues.Count - 1
       };
     
     const buf = await GenerateQuotation(new_form);
@@ -194,8 +206,47 @@ export const getAllForms = async (req, res) => {
   }
 };
 
-//Todo
-export const updateForms = (req, res) => {};
+//DONE
+export const updateForms = async (req, res) => {
+  const new_form = { ...req.body };
+
+  try {
+    const newDelivery = await Models.DeliveryType.create({
+      ...new_form.delivery_type,
+    });
+
+    const newCreated = await Models.QuotationForm.create({
+      ...new_form.options,
+      day: parseInt(new Date().getDate()),
+      month: parseInt(new Date().getMonth() + 1),
+      year: parseInt(new Date().getFullYear()),
+      Delivery_ID: newDelivery.delivery_ID,
+    });
+
+    const new_arr = new_form.all.map((item) => {
+      return {
+        ...item,
+        Quotation_ID: newCreated.quotation_ID,
+      };
+    });
+    const resl = await axios({
+      method: "POST",
+      url: "http://localhost:3001/api/quotation-items/set-quotation",
+      data: {
+        all: new_arr,
+      },
+    });
+
+    if (resl.status === 200) {
+      res.status(200).json({ message: "Create Revision !" });
+    } else {
+      res.status(500).json({ message: "An error occured !" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured !" });
+  }
+};
 //Todo
 export const deleteForms = (req, res) => {};
 
