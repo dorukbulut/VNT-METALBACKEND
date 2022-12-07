@@ -1,6 +1,6 @@
 import Models from "../models/index.js";
 import axios from "axios";
-import Sequelize, { Model } from "sequelize";
+import Sequelize, { Op } from "sequelize";
 import GenerateQuotation from "../utils/generateQuotation.js";
 
 //Done
@@ -141,11 +141,58 @@ export const generateExport = async (req, res) => {
   }
 };
 
-//Todo
-export const getForms = (req, res) => {};
+//DONE
+export const getForms = async (req, res) => {
+  const items = { ...req.body };
 
-//Todo
-export const getAllForms = (req, res) => {};
+  try {
+    const retval = await Models.QuotationForm.findAll({
+      where: {
+        [Op.or]: {
+          Customer_ID: items.Customer_ID,
+        },
+      },
+      include: [
+       {
+        model : Models.QuotationItem,
+        include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip]
+       },
+       {
+        model : Models.Customer,
+        model : Models.DeliveryType
+       }
+      ],
+    });
+
+    res.status(200).json(retval);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured." });
+  }
+};
+
+//DONE
+export const getAllForms = async (req, res) => {
+  try {
+    const retval = await Models.QuotationForm.findAll({
+      include: [
+        {
+         model : Models.QuotationItem,
+         include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip]
+        },
+        {
+         model : Models.Customer,
+         model : Models.DeliveryType
+        }
+       ]
+    });
+
+    res.status(200).json(retval);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured." });
+  }
+};
 
 //Todo
 export const updateForms = (req, res) => {};

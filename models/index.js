@@ -55,6 +55,10 @@ QuotationForm.hasMany(QuotationItem, {
     foreignKey : "Quotation_ID"
 })
 
+QuotationItem.belongsTo(QuotationForm,{
+    foreignKey : "Quotation_ID"
+})
+
 
 //Customer-QuotationForm
 Customer.hasMany(QuotationForm, {
