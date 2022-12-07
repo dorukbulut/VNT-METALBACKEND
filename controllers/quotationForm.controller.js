@@ -247,8 +247,42 @@ export const updateForms = async (req, res) => {
     res.status(500).json({ message: "An error occured !" });
   }
 };
-//Todo
-export const deleteForms = (req, res) => {};
+//DONE
+export const deleteForms = async (req, res) => {
+  const item = {...req.body};
+
+  try {
+    const retval1 = await Models.QuotationItem.update({
+      Quotation_ID : null
+    },{
+      where : {
+        Quotation_ID : item.Quotation_ID
+      }
+    });
+    
+    const retval2 = await Models.SaleConfirmation.update({
+      Quotation_ID : null
+    },{
+      where : {
+        Quotation_ID : item.Quotation_ID
+      }
+    });
+
+    const retval3 = await Models.QuotationForm.destroy({
+      where : {
+        quotation_ID : item.Quotation_ID
+      },
+
+      force : true
+    });
+
+    res.status(200).json({message :"Form deleted"});
+  }
+
+  catch(err) {
+    res.status(500).json({ message: "An error occured !" });
+  }
+};
 
 export default {
   createForm,
