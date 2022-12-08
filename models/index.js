@@ -11,6 +11,8 @@ import QuotationItem from "./quotationItems.model.js";
 import SaleConfirmation from "./saleConfirmation.model.js";
 import WorkOrder from "./workOrders.model.js";
 import StraigthBush  from "./strBush.model.js";
+import DoubleBracketBush from "./DoubleBracketBush.js";
+import MiddleBracketBush from "./MiddleBracketBush.js";
 
 //Customer-TaxInfo
 Customer.hasOne(TaxInfo, {
@@ -47,6 +49,17 @@ QuotationItem.StraigthBush = QuotationItem.hasOne(StraigthBush , {
 
 //QuotationItemBracketBush
 QuotationItem.BracketBush = QuotationItem.hasOne(BracketBush , {
+    foreignKey : "Item_ID"
+})
+
+//QuotationItemDoubleBracketBush
+QuotationItem.DoubleBracketBush = QuotationItem.hasOne(DoubleBracketBush , {
+    foreignKey : "Item_ID"
+})
+
+
+//QuotationItemMiddleBracketBush
+QuotationItem.MiddleBracketBush = QuotationItem.hasOne(MiddleBracketBush , {
     foreignKey : "Item_ID"
 })
 
@@ -107,4 +120,4 @@ SaleConfirmation.hasOne(WorkOrder, {
 
 
 
-export default {TaxInfo,WorkOrder,StraigthBush,SaleConfirmation,QuotationItem, Customer, CustomerAdress, Analyze, BracketBush, Certificate, DeliveryType, PlateStrip, QuotationForm}
+export default {TaxInfo,WorkOrder,DoubleBracketBush, MiddleBracketBush,StraigthBush,SaleConfirmation,QuotationItem, Customer, CustomerAdress, Analyze, BracketBush, Certificate, DeliveryType, PlateStrip, QuotationForm}

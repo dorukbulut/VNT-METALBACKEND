@@ -67,6 +67,20 @@ export const createItem = async (req, res) => {
         );
         res.status(200).json({ message: " Plate/Strip Created !" });
         break;
+      case "double_bracket_bush" :
+        const retval4 = await createQuotationItem(
+          Models.QuotationItem.DoubleBracketBush,
+          new_item
+        );
+        res.status(200).json({ message: "Double Bracket created !" });
+        break;
+      case "middle_bracket_bush" : 
+        const retval5 = await createQuotationItem(
+          Models.QuotationItem.MiddleBracketBush,
+          new_item
+        );
+        res.status(200).json({ message: "Middle Bracket created !" });
+        break;
     }
   } catch (err) {
     console.log(err);
@@ -90,6 +104,8 @@ export const getItems = async (req, res) => {
         Models.StraigthBush,
         Models.BracketBush,
         Models.PlateStrip,
+        Models.DoubleBracketBush,
+        Models.MiddleBracketBush,
         Models.Analyze,
       ],
     });
@@ -109,6 +125,8 @@ export const getAll = async (req, res) => {
         Models.StraigthBush,
         Models.BracketBush,
         Models.PlateStrip,
+        Models.DoubleBracketBush,
+        Models.MiddleBracketBush,
         Models.Analyze,
       ],
     });
@@ -148,6 +166,24 @@ export const updateItem = async (req, res) => {
           Models.PlateStrip
         );
         res.status(200).json({ message: " Plate/Strip Updated !" });
+        break;
+      
+      case  "double_bracket_bush":
+        const retval4 = await updateQuotationItem(
+          Models.QuotationItem.DoubleBracketBush,
+          new_item,
+          Models.DoubleBracketBush
+        );
+        res.status(200).json({ message: "Double Bracket Bush Updated !" });
+        break;
+      
+      case  "middle_bracket_bush":
+        const retval5 = await updateQuotationItem(
+          Models.QuotationItem.MiddleBracketBush,
+          new_item,
+          Models.MiddleBracketBush
+        );
+        res.status(200).json({ message: "Middle Bracket Bush Updated !" });
         break;
     }
   } catch (err) {
@@ -209,6 +245,38 @@ export const deleteItem = async (req, res) => {
         });
         res.status(200).json({ message: "deleted !" });
         break;
+        case "double_bracket_bush":
+          const cos4 = await Models.DoubleBracketBush.destroy({
+            where: {
+              Item_ID: item.item_id,
+            },
+          });
+  
+          const retval4 = await Models.QuotationItem.destroy({
+            where: {
+              item_id: item.item_id,
+            },
+            force: true,
+          });
+          res.status(200).json({ message: "deleted !" });
+          break;
+        
+        case "middle_bracket_bush":
+        const cos5 = await Models.MiddleBracketBush.destroy({
+          where: {
+            Item_ID: item.item_id,
+          },
+        });
+
+        const retval5 = await Models.QuotationItem.destroy({
+          where: {
+            item_id: item.item_id,
+          },
+          force: true,
+        });
+        res.status(200).json({ message: "deleted !" });
+        break;
+      
     }
   } catch (err) {
     console.log(err);
