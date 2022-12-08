@@ -76,7 +76,7 @@ export const generateExport = async (req, res) => {
       include: [
         {
           model: Models.QuotationItem,
-          include: [Models.StraigthBush, Models.BracketBush, Models.PlateStrip, Models.Analyze],
+          include: [Models.StraigthBush, Models.BracketBush, Models.PlateStrip, Models.Analyze, Models.DoubleBracketBush, Models.MiddleBracketBush],
         },
         { model: Models.Customer },
         { model: Models.DeliveryType },
@@ -94,6 +94,7 @@ export const generateExport = async (req, res) => {
       },
     });
     
+    
 
     const new_form = {
         "Customer": Data.dataValues.customer.account_title,
@@ -105,15 +106,21 @@ export const generateExport = async (req, res) => {
         "items": Data.dataValues.quotationItems.map((item, key) => {
             let dim = ""
             
-          if (item.straight_bush === null && item.plate_strip === null) {
+          if (item.straight_bush === null && item.plate_strip === null && item.doublebracket_bush === null && item.middlebracket_bush === null) {
             dim = `${item.bracket_bush.bigger_diameter}*${item.bracket_bush.body_diameter}*${item.bracket_bush.inner_diameter}*${item.bracket_bush.bracket_length}*${item.bracket_bush.bush_length}`
             
-          } if(item.plate_strip === null && item.bracket_bush === null) {
-            dim = `${item.straigth_bush.large_diameter}*${item.straigth_bush.inner_diameter}*${item.straigth_bush.bush_length}`
+          } if(item.plate_strip === null && item.bracket_bush === null && item.doublebracket_bush === null && item.middlebracket_bush === null) {
             
-          } if(item.bracket_bush === null && item.straight_bush === null) {
+            dim = `${item.straight_bush.large_diameter}*${item.straight_bush.inner_diameter}*${item.straight_bush.bush_length}`
+            
+          } if(item.bracket_bush === null && item.straight_bush === null && item.doublebracket_bush === null && item.middlebracket_bush === null) {
 
             dim = `${item.plate_strip.width}*${item.plate_strip["length"]}*${item.plate_strip.thickness}`
+          } if (item.bracket_bush === null && item.straight_bush=== null && item.plate_strip=== null && item.middlebracket_bush === null){
+            dim = `${item.doublebracket_bush.bigger_diameter}*${item.doublebracket_bush.body_diameter}*${item.doublebracket_bush.inner_diameter}*${item.doublebracket_bush.bracket_l1}*${item.doublebracket_bush.bracket_l2}*${item.doublebracket_bush.bracket_l3}*${item.doublebracket_bush.bracket_full}`
+          } if (item.bracket_bush === null && item.straight_bush=== null && item.plate_strip=== null && item.doublebracket_bush === null){
+            dim = `${item.middlebracket_bush.bracket_q1}*${item.middlebracket_bush.bracket_q2}*${item.middlebracket_bush.bracket_q3}*${item.middlebracket_bush.bracket_q4}*${item.middlebracket_bush.bracket_l1}*${item.middlebracket_bush.bracket_l2}*${item.middlebracket_bush.bracket_l3}*${item.middlebracket_bush.bracket_full}`
+
           }
 
           return {
@@ -167,7 +174,7 @@ export const getForms = async (req, res) => {
       include: [
        {
         model : Models.QuotationItem,
-        include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip]
+        include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip, Models.DoubleBracketBush, Models.MiddleBracketBush]
        },
        {
         model : Models.Customer,
@@ -190,7 +197,7 @@ export const getAllForms = async (req, res) => {
       include: [
         {
          model : Models.QuotationItem,
-         include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip]
+         include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip, Models.DoubleBracketBush, Models.MiddleBracketBush]
         },
         {
          model : Models.Customer,
