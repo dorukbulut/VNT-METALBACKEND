@@ -97,6 +97,15 @@ QuotationForm.hasMany(SaleConfirmation, {
 
 })
 
+//SaleConfirmation-QuotationItem
+QuotationItem.hasOne(SaleConfirmation, {
+    foreignKey : "Item_ID",
+})
+
+SaleConfirmation.belongsTo(QuotationItem, {
+    foreignKey : "Item_ID"
+})
+
 //SaleConfirmation-Certificates
 Certificate.hasMany(SaleConfirmation, {
     foreignKey :"Certificate_ID",

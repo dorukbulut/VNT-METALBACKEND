@@ -11,7 +11,47 @@ const SaleConfirmation = db.define(
             primaryKey : true,
             allowNull : false,
         },
+        OrderDate : {
+            type : Sequelize.STRING,
+            allowNull : false,
+        },
 
+        deliveryDate : {
+            type : Sequelize.STRING,
+            allowNull : false,
+        },
+
+        customerReference : {
+            type : Sequelize.STRING,
+            
+        },
+
+        reference : {
+            type : Sequelize.STRING,
+            allowNull : false,
+        },
+
+        description : {
+            type  : Sequelize.STRING,
+        },
+
+        year : {
+            type : Sequelize.BIGINT,
+        },
+
+        month : {
+            type : Sequelize.BIGINT,
+        },
+
+        day : {
+            type : Sequelize.BIGINT,
+        },
+
+        package : {
+            type : Sequelize.BOOLEAN
+        }
+
+        
 
 
     },

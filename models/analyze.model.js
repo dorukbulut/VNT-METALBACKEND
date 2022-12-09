@@ -22,7 +22,7 @@ const Analyze = db.define(
 
         analyze_coefTin : {
             type : Sequelize.DECIMAL,
-            allowNull : false
+           //allowNull : false
         },
 
         

@@ -3,7 +3,7 @@ import axios from "axios";
 import Sequelize, { Op } from "sequelize";
 import GenerateQuotation from "../utils/generateQuotation.js";
 
-//Done
+//Done TODO = Solve the problem between duplicates and Actual numbers
 export const createForm = async (req, res) => {
   const new_form = { ...req.body };
 
@@ -29,7 +29,7 @@ export const createForm = async (req, res) => {
       day: parseInt(new Date().getDate()),
       month: parseInt(new Date().getMonth() + 1),
       year: parseInt(new Date().getFullYear()),
-      reference: `T-${
+      reference: `Q-${
         new_form.options.Customer_ID
       }-${new Date().getFullYear()}-${
         serialCount.length !== 0
