@@ -15,7 +15,12 @@ const Analyze = db.define(
             allowNull : false
         },
 
-        analyze_coef : {
+        analyze_coefCopper : {
+            type : Sequelize.DECIMAL,
+            allowNull : false
+        },
+
+        analyze_coefTin : {
             type : Sequelize.DECIMAL,
             allowNull : false
         },
