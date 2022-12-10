@@ -9,8 +9,9 @@ export const createForm = async (req, res) => {
 
   try {
     const serialCount = await Models.QuotationForm.findAll({
-      group: ["Customer_ID"],
+      group: ["Customer_ID", "reference"],
       attributes: [
+        "reference",
         "Customer_ID",
         [Sequelize.fn("count", Sequelize.col("quotation_ID")), "Count"],
       ],
@@ -18,6 +19,7 @@ export const createForm = async (req, res) => {
         year: parseInt(new Date().getFullYear()),
         Customer_ID: new_form.options.Customer_ID,
       },
+      distinct : true,
     });
 
     const newDelivery = await Models.DeliveryType.create({
@@ -33,7 +35,7 @@ export const createForm = async (req, res) => {
         new_form.options.Customer_ID
       }-${new Date().getFullYear()}-${
         serialCount.length !== 0
-          ? parseInt(serialCount[0].dataValues.Count) + 1
+          ? parseInt(serialCount.length) + 1
           : 1
       }`,
       Delivery_ID: newDelivery.delivery_ID,

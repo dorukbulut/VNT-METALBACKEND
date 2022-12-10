@@ -97,6 +97,10 @@ QuotationForm.hasMany(SaleConfirmation, {
 
 })
 
+SaleConfirmation.belongsTo(QuotationForm, {
+    foreignKey :"Quotation_ID",
+})
+
 //SaleConfirmation-QuotationItem
 QuotationItem.hasOne(SaleConfirmation, {
     foreignKey : "Item_ID",
@@ -112,10 +116,19 @@ Certificate.hasMany(SaleConfirmation, {
     
 })
 
+SaleConfirmation.belongsTo(Certificate, {
+    foreignKey :"Certificate_ID",
+    
+})
+
 //Customer-SaleConfirmation
 Customer.hasMany(SaleConfirmation, {
     foreignKey : "Customer_ID"
 });
+
+SaleConfirmation.belongsTo(Customer, {
+    foreignKey : "Customer_ID"
+})
 
 //SaleConfirmation-WorkOrder
 SaleConfirmation.hasOne(WorkOrder, {

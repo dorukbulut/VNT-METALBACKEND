@@ -6,7 +6,7 @@ import saleConfirmationController from "../controllers/saleConfirmation.controll
 router.post("/create", saleConfirmationController.createForm);
 router.post("/update", saleConfirmationController.updateForm);
 router.post("/get", saleConfirmationController.getForms);
-router.post("/delete", saleConfirmationController.deleteForm);
+router.delete("/delete", saleConfirmationController.deleteForm);
 router.get("/all", saleConfirmationController.getAll);
 router.post("/generate", saleConfirmationController.generateForm);
 
