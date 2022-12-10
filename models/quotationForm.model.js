@@ -2,6 +2,7 @@ import db from "../config/database.js";
 import Sequelize  from "sequelize";
 
 
+
 const QuotationForm = db.define(
     "quotation_forms",
     {
@@ -67,6 +68,11 @@ const QuotationForm = db.define(
 
         reference : {
             type : Sequelize.STRING,
+            
+        },
+
+        revision : {
+            type : Sequelize.INTEGER,
             
         }
 

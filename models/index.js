@@ -111,13 +111,13 @@ SaleConfirmation.belongsTo(QuotationItem, {
 })
 
 //SaleConfirmation-Certificates
-Certificate.hasMany(SaleConfirmation, {
-    foreignKey :"Certificate_ID",
+SaleConfirmation.hasMany(Certificate, {
+    foreignKey :"Sale_ID",
     
 })
 
-SaleConfirmation.belongsTo(Certificate, {
-    foreignKey :"Certificate_ID",
+Certificate.belongsTo(SaleConfirmation, {
+    foreignKey :"Sale_ID",
     
 })
 

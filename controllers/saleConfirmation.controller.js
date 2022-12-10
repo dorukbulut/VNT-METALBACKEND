@@ -28,6 +28,7 @@ export const createForm = async (req, res) => {
             year: parseInt(new Date().getFullYear()),
             day: parseInt(new Date().getDate()),
             month: parseInt(new Date().getMonth() + 1),
+            revision : 0, 
             reference: `ORN-${
               new_confirmation.options.Customer_ID
             }-${new Date().getFullYear()}-${
@@ -36,6 +37,13 @@ export const createForm = async (req, res) => {
                 : 1
             }`,
           });
+          const new_arr = new_confirmation.cert_options.map(item => {
+            return {
+              ...item,
+              Sale_ID : newCreated.sale_ID
+            }
+          })
+        const newCertificate = await Models.Certificate.bulkCreate(new_arr);
         res.status(200).json({message : "Sale Confirmation Created !"});
     }
 
@@ -48,24 +56,31 @@ export const createForm = async (req, res) => {
 export const updateForm = async (req, res) => {
     const new_confirmation = {...req.body}
     try {
-        const serialCount = await Models.SaleConfirmation.findAll({
-            group: ["Customer_ID"],
-            attributes: [
-              "Customer_ID",
-              [Sequelize.fn("count", Sequelize.col("sale_ID")), "Count"],
-            ],
-            where: {
-              year: parseInt(new Date().getFullYear()),
-              Customer_ID: new_confirmation.options.Customer_ID,
-
-            },
-          });
+      const serialCount = await Models.SaleConfirmation.findAll({
+        group: ["reference"],
+        attributes: [
+          "reference",
+          [Sequelize.fn("count", Sequelize.col("reference")), "Count"],
+        ],
+        where: {
+          reference: new_confirmation.options.reference,
+        },
+      });
           const newCreated = await Models.SaleConfirmation.create({
             ...new_confirmation.options,
             year: parseInt(new Date().getFullYear()),
             day: parseInt(new Date().getDate()),
             month: parseInt(new Date().getMonth() + 1),
+            revision : serialCount[0].dataValues.Count
           });
+
+          const new_arr = new_confirmation.cert_options.map(item => {
+            return {
+              ...item,
+              Sale_ID : newCreated.sale_ID
+            }
+          })
+        const newCertificate = await Models.Certificate.bulkCreate(new_arr);
         
         res.status(200).json({message : "NewSale confirmation Created !"});
     }

@@ -31,6 +31,7 @@ export const createForm = async (req, res) => {
       day: parseInt(new Date().getDate()),
       month: parseInt(new Date().getMonth() + 1),
       year: parseInt(new Date().getFullYear()),
+      revision : 0, 
       reference: `Q-${
         new_form.options.Customer_ID
       }-${new Date().getFullYear()}-${
@@ -85,16 +86,7 @@ export const generateExport = async (req, res) => {
       ],
     });
 
-    const serialCount = await Models.QuotationForm.findAll({
-      group: ["reference"],
-      attributes: [
-        "reference",
-        [Sequelize.fn("count", Sequelize.col("reference")), "Count"],
-      ],
-      where: {
-        reference: Data.dataValues.reference,
-      },
-    });
+    
     
     
 
@@ -148,7 +140,7 @@ export const generateExport = async (req, res) => {
         "extra_details" : Data.dataValues.extraDetails,
         "prepared_by" : Data.dataValues.preparedBy,
         "approved_by" : Data.dataValues.approvedBy,
-        "count" : serialCount[0].dataValues.Count - 1
+        "count" : Data.dataValues.revision
       };
     
     const buf = await GenerateQuotation(new_form);
@@ -219,17 +211,29 @@ export const getAllForms = async (req, res) => {
 export const updateForms = async (req, res) => {
   const new_form = { ...req.body };
 
+  const serialCount = await Models.QuotationForm.findAll({
+    group: ["reference"],
+    attributes: [
+      "reference",
+      [Sequelize.fn("count", Sequelize.col("reference")), "Count"],
+    ],
+    where: {
+      reference: new_form.options.reference,
+    },
+  });
+
   try {
     const newDelivery = await Models.DeliveryType.create({
       ...new_form.delivery_type,
     });
-
+    
     const newCreated = await Models.QuotationForm.create({
       ...new_form.options,
       day: parseInt(new Date().getDate()),
       month: parseInt(new Date().getMonth() + 1),
       year: parseInt(new Date().getFullYear()),
       Delivery_ID: newDelivery.delivery_ID,
+      revision : serialCount[0].dataValues.Count
     });
 
     const new_arr = new_form.all.map((item) => {

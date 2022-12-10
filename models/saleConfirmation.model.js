@@ -30,6 +30,10 @@ const SaleConfirmation = db.define(
             type : Sequelize.STRING,
             allowNull : false,
         },
+        revision : {
+            type : Sequelize.INTEGER,
+            
+        },
 
         description : {
             type  : Sequelize.STRING,
