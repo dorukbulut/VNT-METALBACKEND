@@ -1,7 +1,7 @@
 import Models from "../models/index.js";
 import axios from "axios";
 import Sequelize, { Op } from "sequelize";
-
+import GenerateConfirmation from "../utils/generateConfirmation.js";
 
 
 //DONE
@@ -77,7 +77,15 @@ export const updateForm = async (req, res) => {
 }
 
 //TODO
-export const generateForm = async (req, res) => {}
+export const generateForm = async (req, res) => {
+  try {
+
+  }
+
+  catch (err) {
+    
+  }
+}
 
 //DONE
 export const deleteForm = async (req, res) => {
