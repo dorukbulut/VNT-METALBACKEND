@@ -25,7 +25,9 @@ const SaleConfirmation = db.define(
             type : Sequelize.STRING,
             
         },
-
+        specialOffers : {
+            type: Sequelize.STRING,
+        },
         reference : {
             type : Sequelize.STRING,
             allowNull : false,
