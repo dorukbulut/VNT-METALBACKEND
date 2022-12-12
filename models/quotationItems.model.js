@@ -41,6 +41,10 @@ const QuotationItems = db.define(
             type : Sequelize.STRING,
             
         },
+        model_firm : {
+            type : Sequelize.STRING,
+            
+        },
 
         description : {
             type : Sequelize.STRING,
