@@ -135,6 +135,29 @@ SaleConfirmation.hasOne(WorkOrder, {
     foreignKey : "Sale_ID",
 })
 
+WorkOrder.belongsTo(SaleConfirmation, {
+    foreignKey : "Sale_ID"
+})
+
+//WorkOrder-Quotation Item
+QuotationItem.hasOne(WorkOrder, {
+    foreignKey : "Item_ID"
+})
+
+WorkOrder.belongsTo(QuotationItem , {
+    foreignKey : "Item_ID",
+})
+
+//WorkOrder-Customer
+Customer.hasMany(WorkOrder, {
+    foreignKey : "Customer_ID"
+})
+
+WorkOrder.belongsTo(Customer, {
+    foreignKey : "Customer_ID"
+})
+
+
 
 
 

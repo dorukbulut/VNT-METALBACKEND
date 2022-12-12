@@ -14,10 +14,33 @@ const WorkOrders = db.define(
 
         finalWeight : {
             type : Sequelize.DECIMAL,
-            allowNull : false,
         },
         
+        reference : {
+            type : Sequelize.STRING,
+            allowNull : false
+        },
 
+        revision : {
+            type: Sequelize.INTEGER,
+            allowNull : false
+        },
+        plate_model_size : {
+            type : Sequelize.STRING,
+
+        },
+        treatment_size : {
+            type :Sequelize.STRING
+        },
+        year : {
+            type : Sequelize.INTEGER
+        },
+        month : {
+            type : Sequelize.INTEGER
+        },
+        day : {
+            type : Sequelize.INTEGER
+        }
     },
 
     {
