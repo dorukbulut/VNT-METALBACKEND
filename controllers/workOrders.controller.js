@@ -1,6 +1,7 @@
 import Models from "../models/index.js";
-import Sequelize, {Op}  from "sequelize";
+import Sequelize, {Model, Op}  from "sequelize";
 import QuotationForm from "../models/quotationForm.model.js";
+import GenerateWorkOrder from "../utils/generateWorkOrder.js";
 
 const create = async (new_order) =>  {
     const serialCount =  await Models.WorkOrder.findAll({
@@ -151,7 +152,178 @@ export const getAllWorkOrder = async(req ,res) => {
 }
 
 //TODO
-export const generateWorkOrder = (req ,res) => {}
+export const generateWorkOrder = async (req ,res) => {
+  const item = {...req.body}
+  try {
+    switch (item.type) {
+      //DONE
+      case  "straigth_bush" :
+        const retval = await Models.WorkOrder.findOne({
+          where : {
+            workorder_ID : item.id
+          },
+          include: [
+            {
+             model : Models.QuotationItem,
+             include : [Models.Analyze, Models.StraigthBush]
+            },
+            {
+             model : Models.SaleConfirmation,
+             include : [{
+                 model : Models.QuotationForm,
+                 include : [Models.DeliveryType]
+             }, Models.Certificate]
+            },
+            {
+             model : Models.Customer,
+            }
+           ],
+        })
+        let A8 = parseFloat(retval.dataValues.quotationItem.straight_bush.large_diameter)
+        let B8 = parseFloat(retval.dataValues.quotationItem.straight_bush.inner_diameter)
+        let C8 = parseFloat(retval.dataValues.quotationItem.straight_bush.bush_length)
+        let calc = ((A8/2)*(A8/2)*3.14*C8*8.6-(B8/2)*(B8/2)*3.14*C8*8.6)/1000000
+        
+        const new_form = {
+          "reference" : retval.dataValues.reference,
+          "qty" : retval.dataValues.quotationItem.unit_frequence,
+          "deliveryDate" : retval.dataValues.sale_confirmation.deliveryDate,
+          "analysis" : retval.dataValues.quotationItem.analyze.analyze_Name,
+          "customer_reference" : retval.dataValues.sale_confirmation.customerReference,
+          "description" : retval.dataValues.sale_confirmation.description,
+          "specials" : retval.dataValues.sale_confirmation.specialOffers,
+          "date" : `${retval.dataValues.day}-${retval.dataValues.month}-${retval.dataValues.year}`,
+          "big_dia" : retval.dataValues.quotationItem.straight_bush.large_diameter,
+          "inner" : retval.dataValues.quotationItem.straight_bush.inner_diameter,
+          "length" : retval.dataValues.quotationItem.straight_bush.bush_length,
+          "calc_weigth" : calc,
+          "treament_firm" : retval.dataValues.quotationItem.treatment_firm,
+          "model_firm" :  retval.dataValues.quotationItem.model_firm,
+          "packaging" : retval.dataValues.sale_confirmation.package,
+          "hasPackage" : retval.dataValues.sale_confirmation.package,
+          "certificates" : retval.dataValues.sale_confirmation.certificates.map(item => {
+            return {
+                "certificate" : item.name
+            }
+          })
+        }
+        const buf = await GenerateWorkOrder(new_form,"straightbush_template.docx");
+        let options = {
+            root : "./files"
+        }
+        res.status(200).sendFile("output3.docx", options);
+        
+        
+        break;
+      case "bracket_bush":
+        const retval1 = await Models.WorkOrder.findOne({
+          where : {
+            workorder_ID : item.id
+          },
+          include: [
+            {
+             model : Models.QuotationItem,
+             include : [Models.Analyze, Models.BracketBush]
+            },
+            {
+             model : Models.SaleConfirmation,
+             include : [{
+                 model : Models.QuotationForm,
+                 include : [Models.DeliveryType]
+             }, Models.Certificate]
+            },
+            {
+             model : Models.Customer,
+            }
+           ],
+        })
+        
+        res.status(200).json(retval1);
+        break;
+      case "plate_strip" :
+        const retval2 = await Models.WorkOrder.findOne({
+          where : {
+            workorder_ID : item.id
+          },
+          include: [
+            {
+             model : Models.QuotationItem,
+             include : [Models.Analyze, Models.PlateStrip]
+            },
+            {
+             model : Models.SaleConfirmation,
+             include : [{
+                 model : Models.QuotationForm,
+                 include : [Models.DeliveryType]
+             }, Models.Certificate]
+            },
+            {
+             model : Models.Customer,
+            }
+           ],
+        })
+
+        res.status(200).json(retval2);
+        break;
+      
+      case "middlebracket_bush":
+        const retval3 = await Models.WorkOrder.findOne({
+          where : {
+            workorder_ID : item.id
+          },
+          include: [
+            {
+             model : Models.QuotationItem,
+             include : [Models.Analyze, Models.MiddleBracketBush]
+            },
+            {
+             model : Models.SaleConfirmation,
+             include : [{
+                 model : Models.QuotationForm,
+                 include : [Models.DeliveryType]
+             }, Models.Certificate]
+            },
+            {
+             model : Models.Customer,
+            }
+           ],
+        })
+
+        res.status(200).json(retval3);
+        break;
+      
+      case "doublebracket_bush":
+        const retval4 = await Models.WorkOrder.findOne({
+          where : {
+            workorder_ID : item.id
+          },
+          include: [
+            {
+             model : Models.QuotationItem,
+             include : [Models.Analyze, Models.DoubleBracketBush]
+            },
+            {
+             model : Models.SaleConfirmation,
+             include : [{
+                 model : Models.QuotationForm,
+                 include : [Models.DeliveryType]
+             }, Models.Certificate]
+            },
+            {
+             model : Models.Customer,
+            }
+           ],
+        })
+
+        res.status(200).json(retval4);
+        break;
+    }
+  }
+  catch(err) {
+    console.log(err);
+    res.status(500).json({message  :"An error occured !"})
+  }
+}
 
 //DONE
 export const deleteWorkOrder = async (req ,res) => {

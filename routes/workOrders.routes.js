@@ -7,7 +7,7 @@ router.post("/create", workOrdersController.createWorkOrder);
 router.post("/update", workOrdersController.updateWorkOrder);
 router.post("/get", workOrdersController.getWorkOrder);
 router.get("/all", workOrdersController.getAllWorkOrder);
-router.get("/generate", workOrdersController.generateWorkOrder);
+router.post("/generate", workOrdersController.generateWorkOrder);
 router.delete("/delete", workOrdersController.deleteWorkOrder);
 
 
