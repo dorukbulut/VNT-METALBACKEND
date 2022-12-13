@@ -158,6 +158,7 @@ export const generateWorkOrder = async (req ,res) => {
     switch (item.type) {
       //DONE
       case  "straigth_bush" :
+
         const retval = await Models.WorkOrder.findOne({
           where : {
             workorder_ID : item.id
@@ -205,7 +206,8 @@ export const generateWorkOrder = async (req ,res) => {
             return {
                 "certificate" : item.name
             }
-          })
+          }),
+          "revision" : retval.dataValues.revision
         }
         const buf = await GenerateWorkOrder(new_form,"straightbush_template.docx");
         let options = {
@@ -215,6 +217,7 @@ export const generateWorkOrder = async (req ,res) => {
         
         
         break;
+      //DONE
       case "bracket_bush":
         const retval1 = await Models.WorkOrder.findOne({
           where : {
@@ -237,8 +240,37 @@ export const generateWorkOrder = async (req ,res) => {
             }
            ],
         })
-        
-        res.status(200).json(retval1);
+        const new_form1 = {
+          "reference" : retval1.dataValues.reference,
+          "qty" : retval1.dataValues.quotationItem.unit_frequence,
+          "deliveryDate" : retval1.dataValues.sale_confirmation.deliveryDate,
+          "analysis" : retval1.dataValues.quotationItem.analyze.analyze_Name,
+          "customer_reference" : retval1.dataValues.sale_confirmation.customerReference,
+          "description" : retval1.dataValues.sale_confirmation.description,
+          "specials" : retval1.dataValues.sale_confirmation.specialOffers,
+          "date" : `${retval1.dataValues.day}-${retval1.dataValues.month}-${retval1.dataValues.year}`,
+          "Q1" :  retval1.dataValues.quotationItem.bracket_bush.bigger_diameter,
+          "Q2" : retval1.dataValues.quotationItem.bracket_bush.inner_diameter ,
+          "Q3" : retval1.dataValues.quotationItem.bracket_bush.body_diameter ,
+          "L1" : retval1.dataValues.quotationItem.bracket_bush.bracket_length,
+          "L" :   retval1.dataValues.quotationItem.bracket_bush.bush_length,
+          "calc_weigth" : 0,
+          "treament_firm" : retval1.dataValues.quotationItem.treatment_firm,
+          "model_firm" :  retval1.dataValues.quotationItem.model_firm,
+          "packaging" : retval1.dataValues.sale_confirmation.package,
+          "hasPackage" : retval1.dataValues.sale_confirmation.package,
+          "certificates" : retval1.dataValues.sale_confirmation.certificates.map(item => {
+            return {
+                "certificate" : item.name
+            }
+          }),
+          "revision" : retval1.dataValues.revision
+        }
+        const buf1 = await GenerateWorkOrder(new_form1,"bracket_bush_template.docx");
+        let options1 = {
+            root : "./files"
+        }
+        res.status(200).sendFile("output3.docx", options1);
         break;
       case "plate_strip" :
         const retval2 = await Models.WorkOrder.findOne({
