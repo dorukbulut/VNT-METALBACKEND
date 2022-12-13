@@ -122,7 +122,7 @@ export const getWorkOrder = async (req ,res) => {
   }
 }
 
-// DONE
+//DONE
 export const getAllWorkOrder = async(req ,res) => {
   try {
     const retval = await Models.WorkOrder.findAll({
@@ -151,7 +151,7 @@ export const getAllWorkOrder = async(req ,res) => {
   }
 }
 
-//TODO
+//DONE
 export const generateWorkOrder = async (req ,res) => {
   const item = {...req.body}
   try {
@@ -240,6 +240,12 @@ export const generateWorkOrder = async (req ,res) => {
             }
            ],
         })
+        let A81 = retval1.dataValues.quotationItem.bracket_bush.bigger_diameter
+        let B81 = retval1.dataValues.quotationItem.bracket_bush.body_diameter
+        let C81 = retval1.dataValues.quotationItem.bracket_bush.inner_diameter
+        let D81 = retval1.dataValues.quotationItem.bracket_bush.bracket_length
+        let E81 = retval1.dataValues.quotationItem.bracket_bush.bush_length
+        let calc1 = ((A81/2)*(A81/2)*3.14*D81*8.6-(B81/2)*(B81/2)*3.14*D81*8.6)/1000000+((B81/2)*(B81/2)*3.14*E81*8.6-(C81/2)*(C81/2)*3.14*E81*8.6)/1000000
         const new_form1 = {
           "reference" : retval1.dataValues.reference,
           "qty" : retval1.dataValues.quotationItem.unit_frequence,
@@ -254,7 +260,7 @@ export const generateWorkOrder = async (req ,res) => {
           "Q3" : retval1.dataValues.quotationItem.bracket_bush.body_diameter ,
           "L1" : retval1.dataValues.quotationItem.bracket_bush.bracket_length,
           "L" :   retval1.dataValues.quotationItem.bracket_bush.bush_length,
-          "calc_weigth" : 0,
+          "calc_weigth" : calc1,
           "treament_firm" : retval1.dataValues.quotationItem.treatment_firm,
           "model_firm" :  retval1.dataValues.quotationItem.model_firm,
           "packaging" : retval1.dataValues.sale_confirmation.package,
@@ -272,6 +278,8 @@ export const generateWorkOrder = async (req ,res) => {
         }
         res.status(200).sendFile("output3.docx", options1);
         break;
+      
+      //DONE
       case "plate_strip" :
         const retval2 = await Models.WorkOrder.findOne({
           where : {
@@ -294,10 +302,40 @@ export const generateWorkOrder = async (req ,res) => {
             }
            ],
         })
-
-        res.status(200).json(retval2);
+        let dim2 = `${retval2.dataValues.quotationItem.plate_strip.width}*${retval2.dataValues.quotationItem.plate_strip["length"]}*${retval2.dataValues.quotationItem.plate_strip.thickness}`
+        let calc2 = parseFloat(parseFloat(retval2.dataValues.quotationItem.plate_strip.width) * parseFloat(retval2.dataValues.quotationItem.plate_strip["length"]) * parseFloat(retval2.dataValues.quotationItem.plate_strip.thickness )*8.6  / 1000000)
+        const new_form2 = {
+          "reference" : retval2.dataValues.reference,
+          "qty" : retval2.dataValues.quotationItem.unit_frequence,
+          "deliveryDate" : retval2.dataValues.sale_confirmation.deliveryDate,
+          "analysis" : retval2.dataValues.quotationItem.analyze.analyze_Name,
+          "customer_reference" : retval2.dataValues.sale_confirmation.customerReference,
+          "description" : retval2.dataValues.sale_confirmation.description,
+          "specials" : retval2.dataValues.sale_confirmation.specialOffers,
+          "date" : `${retval2.dataValues.day}-${retval2.dataValues.month}-${retval2.dataValues.year}`,
+          "plate_model_size" :  retval2.dataValues.plate_model_size,
+          "treatment_firm_dim" : retval2.dataValues.treatment_size ,
+          "dimensions" : dim2,
+          "calc_weigth" : calc2,
+          "treament_firm" : retval2.dataValues.quotationItem.treatment_firm,
+          "model_firm" :  retval2.dataValues.quotationItem.model_firm,
+          "packaging" : retval2.dataValues.sale_confirmation.package,
+          "hasPackage" : retval2.dataValues.sale_confirmation.package,
+          "certificates" : retval2.dataValues.sale_confirmation.certificates.map(item => {
+            return {
+                "certificate" : item.name
+            }
+          }),
+          "revision" : retval2.dataValues.revision
+        }
+        const buf2 = await GenerateWorkOrder(new_form2,"plate_strip_template.docx");
+        let options2 = {
+            root : "./files"
+        }
+        res.status(200).sendFile("output3.docx", options2);
         break;
       
+      //DONE
       case "middlebracket_bush":
         const retval3 = await Models.WorkOrder.findOne({
           where : {
@@ -320,10 +358,52 @@ export const generateWorkOrder = async (req ,res) => {
             }
            ],
         })
-
-        res.status(200).json(retval3);
+        
+        let A83 = parseFloat(retval3.dataValues.quotationItem.middlebracket_bush.bracket_q1)
+          let B83 = parseFloat(retval3.dataValues.quotationItem.middlebracket_bush.bracket_q3)
+          let C83 = parseFloat(retval3.dataValues.quotationItem.middlebracket_bush.bracket_q2)
+          let D83 = parseFloat(retval3.dataValues.quotationItem.middlebracket_bush.bracket_q4)
+          let E83 = parseFloat(retval3.dataValues.quotationItem.middlebracket_bush.bracket_l1)
+          let F83 = parseFloat(retval3.dataValues.quotationItem.middlebracket_bush.bracket_l2)
+          let G83 = parseFloat(retval3.dataValues.quotationItem.middlebracket_bush.bracket_l3)
+          let H83 = parseFloat(retval3.dataValues.quotationItem.middlebracket_bush.bracket_full)
+          let calc3 = ((A83/2)*(A83/2)*3.14*8.6*E83-(B83/2)*(B83/2)*3.14*8.6*E83)/1000000+((A83/2)*(A83/2)*3.14*8.6*G83-(C83/2)*(C83/2)*3.14*8.6*G83)/1000000+((A83/2)*(A83/2)*3.14*8.6*F83-(D83/2)*(D83/2)*3.14*8.6*F83)/1000000
+        const new_form3 = {
+          "reference" : retval3.dataValues.reference,
+          "qty" : retval3.dataValues.quotationItem.unit_frequence,
+          "deliveryDate" : retval3.dataValues.sale_confirmation.deliveryDate,
+          "analysis" : retval3.dataValues.quotationItem.analyze.analyze_Name,
+          "customer_reference" : retval3.dataValues.sale_confirmation.customerReference,
+          "description" : retval3.dataValues.sale_confirmation.description,
+          "specials" : retval3.dataValues.sale_confirmation.specialOffers,
+          "date" : `${retval3.dataValues.day}-${retval3.dataValues.month}-${retval3.dataValues.year}`,
+          "Q1" :retval3.dataValues.quotationItem.middlebracket_bush.bracket_q1 ,
+          "Q2" : retval3.dataValues.quotationItem.middlebracket_bush.bracket_q2,
+          "Q3" : retval3.dataValues.quotationItem.middlebracket_bush.bracket_q3,
+          "Q4" : retval3.dataValues.quotationItem.middlebracket_bush.bracket_q4,
+          "L1" : retval3.dataValues.quotationItem.middlebracket_bush.bracket_l1,
+          "L2" : retval3.dataValues.quotationItem.middlebracket_bush.bracket_l2,
+          "L3" : retval3.dataValues.quotationItem.middlebracket_bush.bracket_l3,
+          "L" : retval3.dataValues.quotationItem.middlebracket_bush.bracket_full,
+          "calc_weigth" : calc3,
+          "treament_firm" : retval3.dataValues.quotationItem.treatment_firm,
+          "model_firm" :  retval3.dataValues.quotationItem.model_firm,
+          "packaging" : retval3.dataValues.sale_confirmation.package,
+          "hasPackage" : retval3.dataValues.sale_confirmation.package,
+          "certificates" : retval3.dataValues.sale_confirmation.certificates.map(item => {
+            return {
+                "certificate" : item.name
+            }
+          }),
+          "revision" : retval3.dataValues.revision
+        }
+        const buf3 = await GenerateWorkOrder(new_form3,"middlebracket_bush_template.docx");
+        let options3 = {
+            root : "./files"
+        }
+        res.status(200).sendFile("output3.docx", options3);
         break;
-      
+      //DONE
       case "doublebracket_bush":
         const retval4 = await Models.WorkOrder.findOne({
           where : {
@@ -347,7 +427,47 @@ export const generateWorkOrder = async (req ,res) => {
            ],
         })
 
-        res.status(200).json(retval4);
+        let A84 = parseFloat(retval4.dataValues.quotationItem.doublebracket_bush.bigger_diameter)
+          let B84 = parseFloat(retval4.dataValues.quotationItem.doublebracket_bush.body_diameter)
+          let C84 = parseFloat(retval4.dataValues.quotationItem.doublebracket_bush.inner_diameter)
+          let D84 = parseFloat(retval4.dataValues.quotationItem.doublebracket_bush.bracket_l1)
+          let E84 = parseFloat(retval4.dataValues.quotationItem.doublebracket_bush.bracket_l2)
+          let F84 = parseFloat(retval4.dataValues.quotationItem.doublebracket_bush.bracket_l3)
+          let G84 = parseFloat(retval4.dataValues.quotationItem.doublebracket_bush.bracket_full)
+          let calc4 = ((A84/2)*(A84/2)*3.14*8.6*D84-(C84/2)*(C84/2)*3.14*8.6*D84)/1000000+((B84/2)*(B84/2)*3.14*8.6*F84-(C84/2)*(C84/2)*3.14*8.6*F84)/1000000+((A84/2)*(A84/2)*3.14*8.6*E84-(C84/2)*(C84/2)*3.14*8.6*E84)/1000000
+        const new_form4 = {
+          "reference" : retval4.dataValues.reference,
+          "qty" : retval4.dataValues.quotationItem.unit_frequence,
+          "deliveryDate" : retval4.dataValues.sale_confirmation.deliveryDate,
+          "analysis" : retval4.dataValues.quotationItem.analyze.analyze_Name,
+          "customer_reference" : retval4.dataValues.sale_confirmation.customerReference,
+          "description" : retval4.dataValues.sale_confirmation.description,
+          "specials" : retval4.dataValues.sale_confirmation.specialOffers,
+          "date" : `${retval4.dataValues.day}-${retval4.dataValues.month}-${retval4.dataValues.year}`,
+          "Q1" :A84,
+          "Q2" : C84,
+          "Q3" : B84,
+          "L1" : D84,
+          "L2" : E84,
+          "L3" : F84,
+          "L" : G84,
+          "calc_weigth" : calc4,
+          "treament_firm" : retval4.dataValues.quotationItem.treatment_firm,
+          "model_firm" :  retval4.dataValues.quotationItem.model_firm,
+          "packaging" : retval4.dataValues.sale_confirmation.package,
+          "hasPackage" : retval4.dataValues.sale_confirmation.package,
+          "certificates" : retval4.dataValues.sale_confirmation.certificates.map(item => {
+            return {
+                "certificate" : item.name
+            }
+          }),
+          "revision" : retval4.dataValues.revision
+        }
+        const buf4 = await GenerateWorkOrder(new_form4,"doublebracket_bush_template.docx");
+        let options4 = {
+            root : "./files"
+        }
+        res.status(200).sendFile("output3.docx", options4);
         break;
     }
   }
