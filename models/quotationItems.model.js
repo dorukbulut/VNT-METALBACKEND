@@ -46,6 +46,10 @@ const QuotationItems = db.define(
             
         },
 
+        benefitPercent : {
+            type : Sequelize.STRING,
+        },
+
         description : {
             type : Sequelize.STRING,
             
