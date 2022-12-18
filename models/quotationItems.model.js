@@ -17,6 +17,14 @@ const QuotationItems = db.define(
             type : Sequelize.DECIMAL,
             
         },
+        lmeCopper : {
+            type : Sequelize.DECIMAL,
+            
+        },
+        lmeTin : {
+            type : Sequelize.DECIMAL,
+            
+        },
         model_price : {
             type : Sequelize.DECIMAL,
             
@@ -54,6 +62,11 @@ const QuotationItems = db.define(
             type : Sequelize.STRING,
             
         },
+
+        type : {
+            type : Sequelize.STRING,
+            
+        },
         euro : {
             type : Sequelize.DECIMAL,
             
@@ -67,6 +80,9 @@ const QuotationItems = db.define(
             type : Sequelize.DATE,
             
         },
+        kgPrice : {
+            type : Sequelize.DECIMAL,
+        }
 
 
     },
