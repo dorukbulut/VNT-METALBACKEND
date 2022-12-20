@@ -62,7 +62,7 @@ export const createForm = async (req, res) => {
       res.status(500).json({ message: "An error occured !" });
     }
   } catch (err) {
-    console.log(err);
+     //console.log(err);
     res.status(500).json({ message: "An error occured !" });
   }
 };
