@@ -1,7 +1,7 @@
 import Customer from "../models/customer.model.js";
 import TaxInfo from "../models/taxinfo.model.js";
 import CustomerAdress from "../models/customerAdress.model.js";
-
+import Models from "../models/index.js";
 //DONE
 export const createCustomer = async (req, res) => {
   try {
@@ -36,6 +36,36 @@ export const updateCustomer = async (req, res) => {
       retval = await CustomerAdress.update(customer.adressinfo, {
         where: { Customer_ID: customer.account_id },
       });
+
+      //others
+
+      retval = await Models.QuotationItem.update({
+        Customer_ID : customer.customer.account_id
+      }, {
+        where: { Customer_ID: customer.account_id },
+      });
+
+      retval = await Models.QuotationForm.update({
+        Customer_ID : customer.customer.account_id
+      }, {
+        where: { Customer_ID: customer.account_id },
+      });
+      
+      retval = await Models.SaleConfirmation.update({
+        Customer_ID : customer.customer.account_id
+      }, {
+        where: { Customer_ID: customer.account_id },
+      });
+
+      retval = await Models.WorkOrder.update({
+        Customer_ID : customer.customer.account_id
+      }, {
+        where: { Customer_ID: customer.account_id },
+      });
+
+      
+
+
       res.status(200).json({ message: "Customer updated" });
     } else {
       res.status(401).json({ message: "Cannot find customer" });
