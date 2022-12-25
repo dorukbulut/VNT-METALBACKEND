@@ -99,6 +99,7 @@ export const getItems = async (req, res) => {
         [Op.or]: {
           Customer_ID: items.Customer_ID,
         },
+        isUsed : false
       },
       include: [
         Models.StraigthBush,
@@ -121,6 +122,9 @@ export const getItems = async (req, res) => {
 export const getAll = async (req, res) => {
   try {
     const retval = await Models.QuotationItem.findAll({
+      where : {
+        isUsed : false,
+      },
       include: [
         Models.StraigthBush,
         Models.BracketBush,
@@ -290,7 +294,7 @@ export const setQuotation = async (req, res) => {
     let reti = await Models.QuotationItem.bulkCreate(
       items.all,
       {
-        updateOnDuplicate :["Quotation_ID", "deliveryTime", "description"]
+        updateOnDuplicate :["Quotation_ID", "deliveryTime", "description", "isUsed"]
       }
     );
     res.status(200).json({ message: "quotation is set for items."});

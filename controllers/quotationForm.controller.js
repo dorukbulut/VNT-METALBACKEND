@@ -3,7 +3,7 @@ import axios from "axios";
 import Sequelize, { Op } from "sequelize";
 import GenerateQuotation from "../utils/generateQuotation.js";
 
-//Done TODO = Solve the problem between duplicates and Actual numbers
+//Done
 export const createForm = async (req, res) => {
   const new_form = { ...req.body };
 
@@ -46,6 +46,7 @@ export const createForm = async (req, res) => {
       return {
         ...item,
         Quotation_ID: newCreated.quotation_ID,
+        isUsed : true
       };
     });
     const resl = await axios({
@@ -240,6 +241,7 @@ export const updateForms = async (req, res) => {
       return {
         ...item,
         Quotation_ID: newCreated.quotation_ID,
+        isUsed : true
       };
     });
     const resl = await axios({

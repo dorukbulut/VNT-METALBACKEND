@@ -67,6 +67,13 @@ const QuotationItems = db.define(
             type : Sequelize.STRING,
             
         },
+
+        isUsed : {
+            type : Sequelize.BOOLEAN,
+            defaultValue : false,
+            allowNull : false
+            
+        },
         euro : {
             type : Sequelize.DECIMAL,
             
