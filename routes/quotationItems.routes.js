@@ -5,6 +5,7 @@ import quotationItemsController from '../controllers/quotationItems.controller.j
 //CRUD routes
 router.post("/create", quotationItemsController.createItem);
 router.post("/get", quotationItemsController.getItems);
+router.post("/get-quo", quotationItemsController.getByQuotation);
 router.get("/all", quotationItemsController.getAll);
 router.post("/update", quotationItemsController.updateItem);
 router.delete("/delete", quotationItemsController.deleteItem);

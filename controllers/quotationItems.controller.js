@@ -119,6 +119,34 @@ export const getItems = async (req, res) => {
 };
 
 //DONE
+export const getByQuotation = async (req, res) => {
+  const items = { ...req.body };
+  try {
+    const retval = await Models.QuotationItem.findAll({
+      where: {
+        [Op.or]: {
+         Quotation_ID: items.Quotation_ID,
+        },
+        
+      },
+      include: [
+        Models.StraigthBush,
+        Models.BracketBush,
+        Models.PlateStrip,
+        Models.DoubleBracketBush,
+        Models.MiddleBracketBush,
+        Models.Analyze,
+      ],
+    });
+
+    res.status(200).json(retval);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured." });
+  }
+};
+
+//DONE
 export const getAll = async (req, res) => {
   try {
     const retval = await Models.QuotationItem.findAll({
@@ -304,4 +332,4 @@ export const setQuotation = async (req, res) => {
   }
 };
 
-export default { createItem, getItems, getAll, updateItem, deleteItem, setQuotation };
+export default { createItem, getItems, getAll, updateItem, deleteItem, setQuotation, getByQuotation };
