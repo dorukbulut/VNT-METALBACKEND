@@ -10,4 +10,7 @@ router.post("/get", customerControllers.getCustomer);
 router.get("/all", customerControllers.getAllCustomers);
 router.delete("/delete",customerControllers.deleteCustomer);
 
+router.get("/get-page/:page",customerControllers.getPage);
+router.get("/filter",customerControllers.getFiltered);
+
 export default router;
