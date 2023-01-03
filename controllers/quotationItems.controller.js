@@ -1,7 +1,8 @@
 import Models from "../models/index.js";
 import { Op } from "sequelize";
+import db from "../config/database.js";
 
-const createQuotationItem = async (Model, new_item) => {
+const createQuotationItem = async (Model, new_item, t) => {
   return await Models.QuotationItem.create(
     {
       ...new_item.options,
@@ -13,11 +14,11 @@ const createQuotationItem = async (Model, new_item) => {
           association: Model,
         },
       ],
-    }
-  );
+    },
+  {transaction : t});
 };
 
-const updateQuotationItem = async (Model, new_item, Model2) => {
+const updateQuotationItem = async (Model,new_item, Model2, t) => {
   let reti = await Models.QuotationItem.update(
     {
       ...new_item.options,
@@ -26,7 +27,8 @@ const updateQuotationItem = async (Model, new_item, Model2) => {
       where: {
         item_id: new_item.item_id,
       },
-    }
+    },
+    {transaction : t}
   );
 
   return await Model2.update(
@@ -37,7 +39,8 @@ const updateQuotationItem = async (Model, new_item, Model2) => {
       where: {
         Item_ID: new_item.item_id,
       },
-    }
+    },
+    {transaction : t}
   );
 };
 
@@ -45,43 +48,51 @@ const updateQuotationItem = async (Model, new_item, Model2) => {
 export const createItem = async (req, res) => {
   const new_item = { ...req.body };
   try {
-    switch (new_item.type) {
-      case "straight_bush":
-        const retval = await createQuotationItem(
-          Models.QuotationItem.StraigthBush,
-          new_item
-        );
-        res.status(200).json({ message: "Straight Bush Created !" });
-        break;
-      case "bracket_bush":
-        const retval2 = await createQuotationItem(
-          Models.QuotationItem.BracketBush,
-          new_item
-        );
-        res.status(200).json({ message: "Bracket Bush Created !" });
-        break;
-      case "plate_strip":
-        const retval3 = await createQuotationItem(
-          Models.QuotationItem.PlateStrip,
-          new_item
-        );
-        res.status(200).json({ message: " Plate/Strip Created !" });
-        break;
-      case "double_bracket_bush" :
-        const retval4 = await createQuotationItem(
-          Models.QuotationItem.DoubleBracketBush,
-          new_item
-        );
-        res.status(200).json({ message: "Double Bracket created !" });
-        break;
-      case "middle_bracket_bush" : 
-        const retval5 = await createQuotationItem(
-          Models.QuotationItem.MiddleBracketBush,
-          new_item
-        );
-        res.status(200).json({ message: "Middle Bracket created !" });
-        break;
-    }
+    const result = await db.transaction (async (t) => {
+      switch (new_item.type) {
+        case "straight_bush":
+          const retval = await createQuotationItem(
+            Models.QuotationItem.StraigthBush,
+            new_item,
+            t
+          );
+          res.status(200).json({ message: "Straight Bush Created !" });
+          break;
+        case "bracket_bush":
+          const retval2 = await createQuotationItem(
+            Models.QuotationItem.BracketBush,
+            new_item,
+            t
+          );
+          res.status(200).json({ message: "Bracket Bush Created !" });
+          break;
+        case "plate_strip":
+          const retval3 = await createQuotationItem(
+            Models.QuotationItem.PlateStrip,
+            new_item,
+            t
+          );
+          res.status(200).json({ message: " Plate/Strip Created !" });
+          break;
+        case "double_bracket_bush" :
+          const retval4 = await createQuotationItem(
+            Models.QuotationItem.DoubleBracketBush,
+            new_item,
+            t
+          );
+          res.status(200).json({ message: "Double Bracket created !" });
+          break;
+        case "middle_bracket_bush" : 
+          const retval5 = await createQuotationItem(
+            Models.QuotationItem.MiddleBracketBush,
+            new_item,
+            t
+          );
+          res.status(200).json({ message: "Middle Bracket created !" });
+          break;
+      }
+    })
+    
   } catch (err) {
     console.log(err);
 
@@ -174,50 +185,58 @@ export const getAll = async (req, res) => {
 export const updateItem = async (req, res) => {
   const new_item = { ...req.body };
   try {
-    switch (new_item.type) {
-      case "straight_bush":
-        const retval = await updateQuotationItem(
-          Models.QuotationItem.StraigthBush,
-          new_item,
-          Models.StraigthBush
-        );
-        res.status(200).json({ message: "Straight Bush Updated !" });
-        break;
-      case "bracket_bush":
-        const retval2 = await updateQuotationItem(
-          Models.QuotationItem.BracketBush,
-          new_item,
-          Models.BracketBush
-        );
-        res.status(200).json({ message: "Bracket Bush Updated !" });
-        break;
-      case "plate_strip":
-        const retval3 = await updateQuotationItem(
-          Models.QuotationItem.PlateStrip,
-          new_item,
-          Models.PlateStrip
-        );
-        res.status(200).json({ message: " Plate/Strip Updated !" });
-        break;
-      
-      case  "double_bracket_bush":
-        const retval4 = await updateQuotationItem(
-          Models.QuotationItem.DoubleBracketBush,
-          new_item,
-          Models.DoubleBracketBush
-        );
-        res.status(200).json({ message: "Double Bracket Bush Updated !" });
-        break;
-      
-      case  "middle_bracket_bush":
-        const retval5 = await updateQuotationItem(
-          Models.QuotationItem.MiddleBracketBush,
-          new_item,
-          Models.MiddleBracketBush
-        );
-        res.status(200).json({ message: "Middle Bracket Bush Updated !" });
-        break;
-    }
+    const result = await db.transaction(async (t) => {
+      switch (new_item.type) {
+        case "straight_bush":
+          const retval = await updateQuotationItem(
+            Models.QuotationItem.StraigthBush,
+            new_item,
+            Models.StraigthBush,
+            t
+          );
+          res.status(200).json({ message: "Straight Bush Updated !" });
+          break;
+        case "bracket_bush":
+          const retval2 = await updateQuotationItem(
+            Models.QuotationItem.BracketBush,
+            new_item,
+            Models.BracketBush,
+            t
+          );
+          res.status(200).json({ message: "Bracket Bush Updated !" });
+          break;
+        case "plate_strip":
+          const retval3 = await updateQuotationItem(
+            Models.QuotationItem.PlateStrip,
+            new_item,
+            Models.PlateStrip,
+            t
+          );
+          res.status(200).json({ message: " Plate/Strip Updated !" });
+          break;
+        
+        case  "double_bracket_bush":
+          const retval4 = await updateQuotationItem(
+            Models.QuotationItem.DoubleBracketBush,
+            new_item,
+            Models.DoubleBracketBush,
+            t
+          );
+          res.status(200).json({ message: "Double Bracket Bush Updated !" });
+          break;
+        
+        case  "middle_bracket_bush":
+          const retval5 = await updateQuotationItem(
+            Models.QuotationItem.MiddleBracketBush,
+            new_item,
+            Models.MiddleBracketBush,
+            t
+          );
+          res.status(200).json({ message: "Middle Bracket Bush Updated !" });
+          break;
+      }
+    })
+    
   } catch (err) {
     console.log(err);
 
@@ -394,50 +413,6 @@ export const getFiltered = async (req, res) => {
     
     try {
       const customers = await Models.QuotationItem.findAndCountAll(condition);
-      if(queryParams.type) {
-        let new_customers = []
-        if (queryParams.rows.type.includes("FlanşlıBurç")) {
-          new_customers = customers.rows.map(customer => {
-            if(customer.bracket_bush !== null) {
-              return customer
-            }
-          })
-        }
-  
-        if (queryParams.type.includes("ÇiftFlanşlıBurç")) {
-          new_customers = customers.rows.map(customer => {
-            if(customer.doublebracket_bush !== null) {
-              return customer
-            }
-          })
-        }
-  
-        if (queryParams.type.includes("OrtadanFlanşlıBurç")) {
-          new_customers = customers.rows.map(customer => {
-            if(customer.middlebracket_bush !== null) {
-              return customer
-            }
-          })
-        }
-  
-        if (queryParams.type.includes("DüzBurç")) {
-          new_customers = customers.rows.map(customer => {
-            if(customer.straight_bush !== null) {
-              return customer
-            }
-          })
-        }
-  
-        if (queryParams.type.includes("Plaka")) {
-          new_customers = customers.rows.map(customer => {
-            if(customer.plate_strip !== null) {
-              return customer
-            }
-          })
-        }
-      new_customers.count = customers.count
-      res.status(200).json(new_customers);
-      }
       res.status(200).json(customers);
     }
   
