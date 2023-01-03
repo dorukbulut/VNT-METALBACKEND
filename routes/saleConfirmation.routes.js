@@ -10,4 +10,7 @@ router.delete("/delete", saleConfirmationController.deleteForm);
 router.get("/all", saleConfirmationController.getAll);
 router.post("/generate", saleConfirmationController.generateForm);
 
+router.get("/get-page/:page",saleConfirmationController.getPage);
+router.get("/filter",saleConfirmationController.getFiltered);
+
 export default router;
