@@ -10,4 +10,7 @@ router.post("/update", quotationFormController.updateForms);
 router.delete("/delete", quotationFormController.deleteForms);
 router.post("/generate", quotationFormController.generateExport);
 
+router.get("/get-page/:page",quotationFormController.getPage);
+router.get("/filter",quotationFormController.getFiltered);
+
 export default router;

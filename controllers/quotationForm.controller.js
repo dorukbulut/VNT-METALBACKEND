@@ -2,68 +2,72 @@ import Models from "../models/index.js";
 import axios from "axios";
 import Sequelize, { Op } from "sequelize";
 import GenerateQuotation from "../utils/generateQuotation.js";
-
+import db from "../config/database.js";
 //Done
 export const createForm = async (req, res) => {
   const new_form = { ...req.body };
 
   try {
-    const serialCount = await Models.QuotationForm.findAll({
-      group: ["Customer_ID", "reference"],
-      attributes: [
-        "reference",
-        "Customer_ID",
-        [Sequelize.fn("count", Sequelize.col("quotation_ID")), "Count"],
-      ],
-      where: {
+    
+      const serialCount = await Models.QuotationForm.findAll({
+        group: ["Customer_ID", "reference"],
+        attributes: [
+          "reference",
+          "Customer_ID",
+          [Sequelize.fn("count", Sequelize.col("quotation_ID")), "Count"],
+        ],
+        where: {
+          year: parseInt(new Date().getFullYear()),
+          Customer_ID: new_form.options.Customer_ID,
+        },
+        distinct : true,
+      });
+  
+      const newDelivery = await Models.DeliveryType.create({
+        ...new_form.delivery_type,
+      });
+  
+      const newCreated = await Models.QuotationForm.create({
+        ...new_form.options,
+        day: parseInt(new Date().getDate()),
+        month: parseInt(new Date().getMonth() + 1),
         year: parseInt(new Date().getFullYear()),
-        Customer_ID: new_form.options.Customer_ID,
-      },
-      distinct : true,
-    });
-
-    const newDelivery = await Models.DeliveryType.create({
-      ...new_form.delivery_type,
-    });
-
-    const newCreated = await Models.QuotationForm.create({
-      ...new_form.options,
-      day: parseInt(new Date().getDate()),
-      month: parseInt(new Date().getMonth() + 1),
-      year: parseInt(new Date().getFullYear()),
-      revision : 0, 
-      reference: `Q-${
-        new_form.options.Customer_ID
-      }-${new Date().getFullYear()}-${
-        serialCount.length !== 0
-          ? parseInt(serialCount.length) + 1
-          : 1
-      }`,
-      Delivery_ID: newDelivery.delivery_ID,
-    });
-
-    const new_arr = new_form.all.map((item) => {
-      return {
-        ...item,
-        Quotation_ID: newCreated.quotation_ID,
-        isUsed : true
-      };
-    });
-    const resl = await axios({
-      method: "POST",
-      url: "http://localhost:3001/api/quotation-items/set-quotation",
-      data: {
-        all: new_arr,
-      },
-    });
-
-    if (resl.status === 200) {
-      res.status(200).json({ message: "ok" });
-    } else {
-      res.status(500).json({ message: "An error occured !" });
-    }
+        revision : 0, 
+        reference: `Q-${
+          new_form.options.Customer_ID
+        }-${new Date().getFullYear()}-${
+          serialCount.length !== 0
+            ? parseInt(serialCount.length) + 1
+            : 1
+        }`,
+        Delivery_ID: newDelivery.delivery_ID,
+      });
+  
+      const new_arr = new_form.all.map((item) => {
+        return {
+          ...item,
+          Quotation_ID: newCreated.quotation_ID,
+          isUsed : true
+        };
+      });
+      const resl = await axios({
+        method: "POST",
+        url: "http://localhost:3001/api/quotation-items/set-quotation",
+        data: {
+          all: new_arr,
+        },
+      });
+  
+      if (resl.status === 200) {
+        res.status(200).json({ message: "ok" });
+      } else {
+        res.status(500).json({ message: "An error occured !" });
+        throw new Error();
+      }
+    
+    
   } catch (err) {
-     //console.log(err);
+    console.log(err);
     res.status(500).json({ message: "An error occured !" });
   }
 };
@@ -224,39 +228,43 @@ export const updateForms = async (req, res) => {
   });
 
   try {
-    const newDelivery = await Models.DeliveryType.create({
-      ...new_form.delivery_type,
-    });
     
-    const newCreated = await Models.QuotationForm.create({
-      ...new_form.options,
-      day: parseInt(new Date().getDate()),
-      month: parseInt(new Date().getMonth() + 1),
-      year: parseInt(new Date().getFullYear()),
-      Delivery_ID: newDelivery.delivery_ID,
-      revision : serialCount[0].dataValues.Count
-    });
-
-    const new_arr = new_form.all.map((item) => {
-      return {
-        ...item,
-        Quotation_ID: newCreated.quotation_ID,
-        isUsed : true
-      };
-    });
-    const resl = await axios({
-      method: "POST",
-      url: "http://localhost:3001/api/quotation-items/set-quotation",
-      data: {
-        all: new_arr,
-      },
-    });
-
-    if (resl.status === 200) {
-      res.status(200).json({ message: "Create Revision !" });
-    } else {
-      res.status(500).json({ message: "An error occured !" });
-    }
+      const newDelivery = await Models.DeliveryType.create({
+        ...new_form.delivery_type,
+      });
+      
+      const newCreated = await Models.QuotationForm.create({
+        ...new_form.options,
+        day: parseInt(new Date().getDate()),
+        month: parseInt(new Date().getMonth() + 1),
+        year: parseInt(new Date().getFullYear()),
+        Delivery_ID: newDelivery.delivery_ID,
+        revision : serialCount[0].dataValues.Count
+      });
+  
+      const new_arr = new_form.all.map((item) => {
+        return {
+          ...item,
+          Quotation_ID: newCreated.quotation_ID,
+          isUsed : true
+        };
+      });
+      const resl = await axios({
+        method: "POST",
+        url: "http://localhost:3001/api/quotation-items/set-quotation",
+        data: {
+          all: new_arr,
+        },
+      });
+  
+      if (resl.status === 200) {
+        res.status(200).json({ message: "Create Revision !" });
+      } else {
+        res.status(500).json({ message: "An error occured !" });
+        throw new Error()
+      }
+    
+    
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "An error occured !" });
@@ -267,31 +275,35 @@ export const deleteForms = async (req, res) => {
   const item = {...req.body};
 
   try {
-    const retval1 = await Models.QuotationItem.update({
-      Quotation_ID : null
-    },{
-      where : {
-        Quotation_ID : item.Quotation_ID
-      }
-    });
+    const result = await db.transaction(async (t) => {
+      const retval1 = await Models.QuotationItem.update({
+        Quotation_ID : null,
+        isUsed : false,
+      },{
+        where : {
+          Quotation_ID : item.Quotation_ID
+        }
+      }, {transaction : t});
+      
+      const retval2 = await Models.SaleConfirmation.update({
+        Quotation_ID : null
+      },{
+        where : {
+          Quotation_ID : item.Quotation_ID
+        }
+      }, {transaction : t});
+  
+      const retval3 = await Models.QuotationForm.destroy({
+        where : {
+          quotation_ID : item.Quotation_ID
+        },
+  
+        force : true
+      }, {transaction : t});
+  
+      res.status(200).json({message :"Form deleted"});
+    })
     
-    const retval2 = await Models.SaleConfirmation.update({
-      Quotation_ID : null
-    },{
-      where : {
-        Quotation_ID : item.Quotation_ID
-      }
-    });
-
-    const retval3 = await Models.QuotationForm.destroy({
-      where : {
-        quotation_ID : item.Quotation_ID
-      },
-
-      force : true
-    });
-
-    res.status(200).json({message :"Form deleted"});
   }
 
   catch(err) {
@@ -299,8 +311,94 @@ export const deleteForms = async (req, res) => {
   }
 };
 
+export const getPage = async (req, res) => {
+  const pageNumber = req.params.page
+  try {
+    const forms = await Models.QuotationForm.findAndCountAll({
+      limit : 6,
+      offset : pageNumber * 6,
+      include: [
+        {
+         model : Models.QuotationItem,
+         include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip, Models.DoubleBracketBush, Models.MiddleBracketBush]
+        },
+        {
+         model : Models.Customer,
+         model : Models.DeliveryType
+        }
+       ],
+       distinct : true
+    });
+    
+    
+    res.status(200).json(forms);
+  }
+
+  catch(err) {
+    console.log(err);
+    res.status(500).json({message : "An Error Occured !"});
+  }
+};
+
+function isEmptyObject(obj){
+  return JSON.stringify(obj) === '{}'
+}
+
+export const getFiltered = async (req, res) => {
+  const queryParams = {...req.query}
+ 
+  if(!isEmptyObject(queryParams)) {
+    let condition  = {
+      where : {},
+      include: [
+        {
+         model : Models.QuotationItem,
+         include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip, Models.DoubleBracketBush, Models.MiddleBracketBush]
+        },
+        {
+         model : Models.Customer,
+         model : Models.DeliveryType
+        }
+       ],
+       distinct : true
+    }
+    if (queryParams.account) {
+      condition.where.Customer_ID = queryParams.account
+    }
+  
+    if(queryParams.reference) {
+      condition.where.reference = {[Op.like] : `%${queryParams.reference}%`
+    }}
+  
+    if(queryParams.customer) {
+      condition.where.customerInquiryNum = {[Op.like] : `%${queryParams.customer}%`
+    }}
+    if(queryParams.date) {
+      let new_date = new Date(queryParams.date);
+      condition.where.day = new_date.getDate();
+      condition.where.month = new_date.getMonth() + 1;
+      condition.where.year = new_date.getFullYear();
+    }
+    
+    try {
+      const customers = await Models.QuotationForm.findAndCountAll(condition);
+      res.status(200).json(customers);
+    }
+  
+    catch(err) {
+      console.log(err);
+      res.status(500).json({message : "An Error Occured !"});
+    }
+  } else {
+    res.sendStatus(401);
+  }
+  
+};
+
 export default {
   createForm,
+  getPage,
+  getFiltered,
   getForms,
   getAllForms,
   updateForms,
