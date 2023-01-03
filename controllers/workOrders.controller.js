@@ -500,6 +500,123 @@ export const deleteWorkOrder = async (req ,res) => {
   }
 }
 
+export const getPage = async (req, res) => {
+  const pageNumber = req.params.page
+  try {
+    const forms = await Models.WorkOrder.findAndCountAll({
+      limit : 6,
+      offset : pageNumber * 6,
+      include: [
+        {
+         model : Models.QuotationItem,
+         include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip, Models.DoubleBracketBush, Models.MiddleBracketBush]
+        },
+        {
+         model : Models.SaleConfirmation,
+         include : [{
+             model : Models.QuotationForm,
+             include : [Models.DeliveryType]
+         }, Models.Certificate]
+        },
+        {
+         model : Models.Customer,
+        }
+       ],
+       distinct : true,
+       
+       
+    });
+    
+    
+    res.status(200).json(forms);
+  }
+
+  catch(err) {
+    console.log(err);
+    res.status(500).json({message : "An Error Occured !"});
+  }
+};
+
+function isEmptyObject(obj){
+  return JSON.stringify(obj) === '{}'
+}
+
+export const getFiltered = async (req, res) => {
+  const queryParams = {...req.query}
+  if(!isEmptyObject(queryParams)) {
+    let condition  = {
+      where : {},
+      include: [
+        {
+         model : Models.QuotationItem,
+         include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip, Models.DoubleBracketBush, Models.MiddleBracketBush]
+        },
+        {
+         model : Models.SaleConfirmation,
+         include : [{
+             model : Models.QuotationForm,
+             include : [Models.DeliveryType]
+         }, Models.Certificate]
+        },
+        {
+         model : Models.Customer,
+        }
+       ],
+       
+       
+    }
+    if (queryParams.account) {
+      condition.where.Customer_ID = queryParams.account
+    }
+  
+    if(queryParams.workReference) {
+      condition.where.reference = queryParams.workReference}
+  
+    if(queryParams.saleReference) {
+      condition.include = [
+        {
+         model : Models.QuotationItem,
+         include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip, Models.DoubleBracketBush, Models.MiddleBracketBush]
+        },
+        {
+         model : Models.SaleConfirmation,
+         where : {
+          reference : {[Op.like] : `%${queryParams.saleReference}%`}
+         },
+         include : [{
+             model : Models.QuotationForm,
+             include : [Models.DeliveryType]
+         }, Models.Certificate]
+        },
+        {
+         model : Models.Customer,
+        }
+       ]
+    }
+    if(queryParams.date) {
+      let new_date = new Date(queryParams.date);
+      condition.where.day = new_date.getDate();
+      condition.where.month = new_date.getMonth() + 1;
+      condition.where.year = new_date.getFullYear();
+    }
+    
+    try {
+      
+      const customers = await Models.WorkOrder.findAndCountAll(condition);
+      res.status(200).json(customers);
+    }
+  
+    catch(err) {
+      console.log(err);
+      res.status(500).json({message : "An Error Occured !"});
+    }
+  } else {
+    res.sendStatus(401);
+  }
+  
+};
 
 
-export default {createWorkOrder, updateWorkOrder, getWorkOrder, getAllWorkOrder, generateWorkOrder, deleteWorkOrder}
+
+
+export default {getFiltered, getPage, createWorkOrder, updateWorkOrder, getWorkOrder, getAllWorkOrder, generateWorkOrder, deleteWorkOrder}

@@ -10,5 +10,8 @@ router.get("/all", workOrdersController.getAllWorkOrder);
 router.post("/generate", workOrdersController.generateWorkOrder);
 router.delete("/delete", workOrdersController.deleteWorkOrder);
 
+router.get("/get-page/:page",workOrdersController.getPage);
+router.get("/filter",workOrdersController.getFiltered);
+
 
 export default router;
