@@ -179,7 +179,6 @@ export const getPage = async (req, res) => {
     const customers = await Models.Customer.findAndCountAll({
       limit : 6,
       offset : pageNumber * 6,
-      include : [Models.CustomerAdress, Models.TaxInfo]
     });
     
     
@@ -201,7 +200,6 @@ export const getFiltered = async (req, res) => {
   if(!isEmptyObject(queryParams)) {
     let condition  = {
       where : {},
-      include :  [Models.TaxInfo, Models.CustomerAdress]
     }
     if (queryParams.account) {
       condition.where.account_id = queryParams.account
@@ -214,14 +212,6 @@ export const getFiltered = async (req, res) => {
     if(queryParams.related) {
       condition.where.account_related = {[Op.like] : `%${queryParams.related}%`
     }}
-    if(queryParams.country) {
-      condition.include = [{
-        model : Models.CustomerAdress,
-        where : {
-          customer_country : {[Op.like]  :  `%${queryParams.country}%`}
-        }
-      }, {model : Models.TaxInfo}]
-    }
     
     try {
       const customers = await Models.Customer.findAndCountAll(condition);
@@ -233,7 +223,7 @@ export const getFiltered = async (req, res) => {
       res.status(500).json({message : "An Error Occured !"});
     }
   } else {
-    res.sendStatus(401);
+    res.redirect("/api/customer/get-page/0")
   }
   
 };

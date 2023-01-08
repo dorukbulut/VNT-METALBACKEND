@@ -5,10 +5,16 @@ import Sequelize  from "sequelize";
 const TaxInfo = db.define(
     "tax_info",
     {
-        tax_info_taxID : {
-            type : Sequelize.BIGINT,
+        id : {
+            type : Sequelize.UUID,
             primaryKey : true,
             allowNull : false,
+            defaultValue : Sequelize.UUIDV4
+        },
+
+        tax_info_taxID : {
+            type : Sequelize.BIGINT,
+            
         },
 
         tax_info_Admin : {
@@ -19,13 +25,12 @@ const TaxInfo = db.define(
 
         tax_info_AdminID : {
             type : Sequelize.INTEGER,
-            allowNull : false
+            
         },
 
     },
 
     {
-        indexes : [{unique : true, fields : ["tax_info_taxID", "tax_info_AdminID"]}],
         timestamps : false,
         tablename : "CustomersTaxInfo"
     }

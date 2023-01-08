@@ -23,7 +23,6 @@ const Customer = db.define(
 
         account_IN : {
             type : Sequelize.BIGINT,
-            allowNull : false
         },
 
         account_tel1 : {
@@ -56,12 +55,11 @@ const Customer = db.define(
 
         account_KEP : {
             type : Sequelize.STRING,
-            allowNull : false
         }
 
     },
     {
-        indexes : [{unique : true, fields : ["account_id", "account_IN", "account_KEP"]}],
+        indexes : [{unique : true, fields : ["account_id"]}],
         timestamps : false,
         tablename : "Customers"
     }
