@@ -370,7 +370,6 @@ export const getPage = async(req, res) => {
         Models.PlateStrip,
         Models.DoubleBracketBush,
         Models.MiddleBracketBush,
-        Models.Analyze,
       ],
     });
     
@@ -400,7 +399,6 @@ export const getFiltered = async (req, res) => {
         Models.PlateStrip,
         Models.DoubleBracketBush,
         Models.MiddleBracketBush,
-        Models.Analyze,
       ],
     }
     if (queryParams.account) {
@@ -420,11 +418,11 @@ export const getFiltered = async (req, res) => {
     }
   
     catch(err) {
-      console.log(err);
+      console.error(err);
       res.status(500).json({message : "An Error Occured !"});
     }
   } else {
-    res.sendStatus(401);
+    res.redirect("/api/quotation-items/get-page/0")
   }
 }
 
