@@ -83,6 +83,10 @@ const QuotationItems = db.define(
             type : Sequelize.DECIMAL,
             
         },
+        currency : {
+            type : Sequelize.STRING,
+        },
+
         createdAt : {
             type : Sequelize.STRING,
             
