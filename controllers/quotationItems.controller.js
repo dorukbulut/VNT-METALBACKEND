@@ -364,10 +364,6 @@ export const getPage = async(req, res) => {
     const items = await Models.QuotationItem.findAndCountAll({
       limit : 6,
       offset : pageNumber * 6,
-      where : {
-        isUsed : false
-      },
-
       include: [
         Models.StraigthBush,
         Models.BracketBush,
