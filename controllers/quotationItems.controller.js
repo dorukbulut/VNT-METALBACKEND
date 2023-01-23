@@ -391,7 +391,7 @@ export const getFiltered = async (req, res) => {
   if(!isEmptyObject(queryParams)) {
     let condition  = {
       where : {
-        isUsed : false
+        
       },
       include: [
         Models.StraigthBush,
