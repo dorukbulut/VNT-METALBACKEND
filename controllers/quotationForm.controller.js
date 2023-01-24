@@ -130,7 +130,8 @@ export const generateExport = async (req, res) => {
             "qty" : item.unit_frequence,
             "unit_price" : item.unit_price,
             "total_price" : parseInt(item.unit_frequence) * parseFloat(item.unit_price),
-            "delivery" : item.deliveryTime
+            "delivery" : item.deliveryTime,
+            "currency" : item.currency
 
           }
         }),
@@ -145,7 +146,8 @@ export const generateExport = async (req, res) => {
         "extra_details" : Data.dataValues.extraDetails,
         "prepared_by" : Data.dataValues.preparedBy,
         "approved_by" : Data.dataValues.approvedBy,
-        "count" : Data.dataValues.revision
+        "count" : Data.dataValues.revision,
+        "currency" : Data.dataValues.quotationItems[0].currency
       };
     
     const buf = await GenerateQuotation(new_form);
