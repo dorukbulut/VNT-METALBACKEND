@@ -64,7 +64,13 @@ const DeliveryType = db.define(
             type : Sequelize.DECIMAL,
             defaultValue : 0
         },
-        
+
+        currencyType : {
+            type : Sequelize.STRING
+        },
+        currencyVal : {
+            type : Sequelize.DECIMAL
+        },
         total : {
             type : Sequelize.BIGINT,
         },

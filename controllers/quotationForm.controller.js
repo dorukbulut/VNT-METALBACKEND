@@ -325,8 +325,11 @@ export const getPage = async (req, res) => {
          include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip, Models.DoubleBracketBush, Models.MiddleBracketBush]
         },
         {
-         model : Models.Customer,
+         
          model : Models.DeliveryType
+        },
+        {
+          model : Models.Customer,
         }
        ],
        distinct : true
