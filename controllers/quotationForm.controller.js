@@ -129,17 +129,17 @@ export const generateExport = async (req, res) => {
             "analysis" : item.analyze.analyze_Name,
             "qty" : item.unit_frequence,
             "unit_price" : item.unit_price,
-            "total_price" : parseInt(item.unit_frequence) * parseFloat(item.unit_price),
+            "total_price" : (parseInt(item.unit_frequence) * parseFloat(item.unit_price)).toFixed(2),
             "delivery" : item.deliveryTime,
             "currency" : item.currency
 
           }
         }),
-        "grand_total_exw" : Data.dataValues.grand_total,
+        "grand_total_exw" : parseFloat(Data.dataValues.grand_total).toFixed(2),
         "inco_name" : Data.dataValues.delivery_type.name,
         "inco_location" : Data.dataValues.delivery_type.description,
-        "inco_cost" : Data.dataValues.delivery_type.total,
-        "grand_total" : parseFloat(Data.dataValues.delivery_type.total) + parseFloat(Data.dataValues.grand_total),
+        "inco_cost" : parseFloat(Data.dataValues.delivery_type.total).toFixed(2),
+        "grand_total" : (parseFloat(Data.dataValues.delivery_type.total) + parseFloat(Data.dataValues.grand_total)).toFixed(2),
         "validity_of_offer" : Data.dataValues.validityOfOffer,
         "incoterm_type" : Data.dataValues.IncotermType,
         "payment_terms" : Data.dataValues.PaymentTerms,
