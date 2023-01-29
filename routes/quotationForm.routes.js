@@ -9,7 +9,7 @@ router.get("/all", quotationFormController.getAllForms);
 router.post("/update", quotationFormController.updateForms);
 router.delete("/delete", quotationFormController.deleteForms);
 router.post("/generate", quotationFormController.generateExport);
-
+router.post("/get-quo", quotationFormController.getByQuotation);
 router.get("/get-page/:page",quotationFormController.getPage);
 router.get("/filter",quotationFormController.getFiltered);
 

@@ -314,12 +314,13 @@ export const deleteForms = async (req, res) => {
   }
 };
 
-export const getPage = async (req, res) => {
-  const pageNumber = req.params.page
+export const getByQuotation = async (req, res) => {
+  const items = { ...req.body };
   try {
-    const forms = await Models.QuotationForm.findAndCountAll({
-      limit : 6,
-      offset : pageNumber * 6,
+    const retval = await Models.QuotationForm.findAll({
+      where: {
+        quotation_ID: items.quotation_ID, 
+      },
       include: [
         {
          model : Models.QuotationItem,
@@ -329,10 +330,26 @@ export const getPage = async (req, res) => {
          
          model : Models.DeliveryType
         },
+
         {
           model : Models.Customer,
         }
        ],
+    });
+
+    res.status(200).json(retval);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured." });
+  }
+};
+
+export const getPage = async (req, res) => {
+  const pageNumber = req.params.page
+  try {
+    const forms = await Models.QuotationForm.findAndCountAll({
+      limit : 6,
+      offset : pageNumber * 6,
        distinct : true
     });
     
@@ -355,17 +372,7 @@ export const getFiltered = async (req, res) => {
  
   if(!isEmptyObject(queryParams)) {
     let condition  = {
-      where : {},
-      include: [
-        {
-         model : Models.QuotationItem,
-         include : [Models.Analyze, Models.BracketBush, Models.StraigthBush, Models.PlateStrip, Models.DoubleBracketBush, Models.MiddleBracketBush]
-        },
-        {
-         model : Models.Customer,
-         model : Models.DeliveryType
-        }
-       ],
+       where : {},
        distinct : true
     }
     if (queryParams.account) {
@@ -373,12 +380,11 @@ export const getFiltered = async (req, res) => {
     }
   
     if(queryParams.reference) {
-      condition.where.reference = {[Op.like] : `%${queryParams.reference}%`
-    }}
+      condition.where.reference = `${queryParams.reference}`
+    }
   
     if(queryParams.customer) {
-      condition.where.customerInquiryNum = {[Op.like] : `%${queryParams.customer}%`
-    }}
+      condition.where.customerInquiryNum = `${queryParams.customer}`}
     if(queryParams.date) {
       let new_date = new Date(queryParams.date);
       condition.where.day = new_date.getDate();
@@ -396,7 +402,7 @@ export const getFiltered = async (req, res) => {
       res.status(500).json({message : "An Error Occured !"});
     }
   } else {
-    res.sendStatus(401);
+    res.redirect("/api/quotation-form/get-page/0");
   }
   
 };
@@ -410,4 +416,5 @@ export default {
   updateForms,
   deleteForms,
   generateExport,
+  getByQuotation
 };
