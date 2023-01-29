@@ -4,12 +4,17 @@ import fs from "fs";
 import path from "path";
 
 let GenerateQuotation = async (data) => {
-  // Load the docx file as binary content
+  // Load the docx file as binary contentc
+  let template = "";
+  if (data.company === "VNT") {
+    template = "quotationform_template_vnt.docx"
+  } else {
+    template = "quotationform_template_bilgesin.docx"
+  }
   const content = fs.readFileSync(
-    path.resolve("./templates", "quotationform_template.docx"),
+    path.resolve("./templates", template),
     "binary"
   );
-
   const zip = new PizZip(content);
 
   const doc = new Docxtemplater(zip, {
@@ -19,6 +24,7 @@ let GenerateQuotation = async (data) => {
 
   // Render the document (Replace {first_name} by John, {last_name} by Doe, ...)
 doc.render(data);
+
 
 const buf = doc.getZip().generate({
     type: "nodebuffer",

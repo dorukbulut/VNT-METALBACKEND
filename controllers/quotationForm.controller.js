@@ -141,6 +141,7 @@ export const generateExport = async (req, res) => {
         "inco_cost" : parseFloat(Data.dataValues.delivery_type.total).toFixed(2),
         "grand_total" : (parseFloat(Data.dataValues.delivery_type.total) + parseFloat(Data.dataValues.grand_total)).toFixed(2),
         "validity_of_offer" : Data.dataValues.validityOfOffer,
+        "company" : Data.dataValues.company,
         "incoterm_type" : Data.dataValues.IncotermType,
         "payment_terms" : Data.dataValues.PaymentTerms,
         "extra_details" : Data.dataValues.extraDetails,

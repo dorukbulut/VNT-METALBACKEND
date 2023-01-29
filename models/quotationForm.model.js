@@ -74,6 +74,12 @@ const QuotationForm = db.define(
         revision : {
             type : Sequelize.INTEGER,
             
+        },
+        language : {
+            type : Sequelize.STRING,
+        },
+        company : {
+            type : Sequelize.STRING
         }
 
 
