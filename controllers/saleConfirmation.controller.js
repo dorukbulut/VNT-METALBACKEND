@@ -465,6 +465,7 @@ export const getPage = async (req, res) => {
     const forms = await Models.SaleConfirmation.findAndCountAll({
       limit: 6,
       offset: pageNumber * 6,
+      distinct: true,
       include: [
         {
           model: Models.QuotationItem,
