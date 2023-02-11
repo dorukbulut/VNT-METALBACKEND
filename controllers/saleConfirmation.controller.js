@@ -284,6 +284,7 @@ export const generateForm = async (req, res) => {
       }),
       firm_name: Data.dataValues.quotationItem.treatment_firm,
       treatment_price: Data.dataValues.quotationItem.treatment_price,
+      model_firm: Data.dataValues.quotationItem.model_firm,
       model_price: Data.dataValues.quotationItem.model_price,
       certs: Data.dataValues.certificates.map((item) => {
         return {
@@ -292,6 +293,8 @@ export const generateForm = async (req, res) => {
       }),
       delivery_type: Data.dataValues.quotation_form.delivery_type.name,
       packaging: Data.dataValues.package,
+      company: Data.dataValues.company === "VNT" ? "vnt" : "bilgesin",
+      language: Data.dataValues.language === "English" ? "eng" : "tr",
       hasPackage: Data.dataValues.package,
       revision: Data.dataValues.revision,
     };
