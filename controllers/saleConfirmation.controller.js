@@ -471,26 +471,7 @@ export const getPage = async (req, res) => {
       distinct: true,
       include: [
         {
-          model: Models.QuotationItem,
-          include: [
-            Models.Analyze,
-            Models.BracketBush,
-            Models.StraigthBush,
-            Models.PlateStrip,
-            Models.DoubleBracketBush,
-            Models.MiddleBracketBush,
-          ],
-        },
-        {
           model: Models.QuotationForm,
-          include: [Models.DeliveryType],
-        },
-
-        {
-          model: Models.Certificate,
-        },
-        {
-          model: Models.Customer,
         },
       ],
     });
@@ -513,26 +494,7 @@ export const getFiltered = async (req, res) => {
       where: {},
       include: [
         {
-          model: Models.QuotationItem,
-          include: [
-            Models.Analyze,
-            Models.BracketBush,
-            Models.StraigthBush,
-            Models.PlateStrip,
-            Models.DoubleBracketBush,
-            Models.MiddleBracketBush,
-          ],
-        },
-        {
           model: Models.QuotationForm,
-          include: [Models.DeliveryType],
-        },
-
-        {
-          model: Models.Certificate,
-        },
-        {
-          model: Models.Customer,
         },
       ],
     };
@@ -547,29 +509,10 @@ export const getFiltered = async (req, res) => {
     if (queryParams.quotReference) {
       condition.include = [
         {
-          model: Models.QuotationItem,
-          include: [
-            Models.Analyze,
-            Models.BracketBush,
-            Models.StraigthBush,
-            Models.PlateStrip,
-            Models.DoubleBracketBush,
-            Models.MiddleBracketBush,
-          ],
-        },
-        {
           model: Models.QuotationForm,
           where: {
-            reference: { [Op.like]: `%${queryParams.quotReference}%` },
+            reference: `${queryParams.quotReference}`,
           },
-          include: [Models.DeliveryType],
-        },
-
-        {
-          model: Models.Certificate,
-        },
-        {
-          model: Models.Customer,
         },
       ];
     }
@@ -590,7 +533,7 @@ export const getFiltered = async (req, res) => {
       res.status(500).json({ message: "An Error Occured !" });
     }
   } else {
-    res.sendStatus(401);
+    res.redirect("/api/sale-confirmation/get-page/0");
   }
 };
 
