@@ -1,59 +1,54 @@
 import Analyze from "../models/analyze.model.js";
 
+//Done
+export const createAnalyse = async (req, res) => {
+  try {
+    const new_analyse = { ...req.body };
+
+    let _ = await Analyze.create(new_analyse.analyze);
+
+    res.status(200).json({ message: "Analyze Created" });
+  } catch (err) {
+    res.status(500).json({ message: "An error occured." });
+  }
+};
 
 //Done
-export const createAnalyse = async(req, res) => {
-    
+export const updateAnalyze = async (req, res) => {
+  try {
+    const analyse = { ...req.body };
 
-    try {
-        const new_analyse = {...req.body};
+    if (
+      await Analyze.findOne({
+        where: {
+          analyze_id: analyse.analyze_id,
+        },
+      })
+    ) {
+      let retval = await Analyze.update(analyse.analyze, {
+        where: {
+          analyze_id: analyse.analyze_id,
+        },
+      });
 
-        let  _ = await Analyze.create(new_analyse.analyze);
-
-        res.status(200).json({message : "Analyze Created"})
+      res.status(200).json({ message: "Analyze Updated" });
+    } else {
+      res.status(401).json({ message: "Cannot find analyze" });
     }
-
-    catch(err) {
-        res.status(500).json({ message: "An error occured." });
-    }
-
-
-}
+  } catch (err) {
+    res.status(500).json({ message: "An error occurred." });
+  }
+};
 
 //Done
-export const updateAnalyze = async(req, res) => {
-    try{
-        const analyse = {...req.body};
-
-        if (await Analyze.findOne({where : {
-            analyze_id : analyse.analyze_id
-        }})) {
-            let retval = await Analyze.update(analyse.analyze,{where : {
-                analyze_id : analyse.analyze_id
-            }} )
-
-            res.status(200).json({ message: "Analyze Updated"});
-
-        } else {
-            res.status(401).json({ message: "Cannot find analyze" });
-        }
-    }
-
-    catch(err) {
-        
-        res.status(500).json({ message: "An error occurred." });
-    }
-}
-
-//Done
-export const getAnalyse = async(req, res) => {
-    const q = { ...req.body };
+export const getAnalyse = async (req, res) => {
+  const q = { ...req.body };
 
   try {
     const analyze = await Analyze.findAll({
       where: {
         analyze_id: q.analyze_id,
-      }
+      },
     });
 
     if (analyze.length !== 0) {
@@ -65,39 +60,37 @@ export const getAnalyse = async(req, res) => {
     console.log(err);
     res.status(500).json({ message: "An error occured" });
   }
-}
-
+};
 
 //Done
 export const getAllAnalyze = async (req, res) => {
-    try {
-        const analyzes = await Analyze.findAll();
-        if (analyzes !== 0) {
-          res.status(200).json({ analyzes });
-        } else {
-          res.status(401).json({ message: "No Analyze found in database" });
-        }
-      } catch (err) {
-        console.log(err);
-        res.status(500).json({ message: "An error occured" });
-      }
-}
-
+  try {
+    const analyzes = await Analyze.findAll();
+    if (analyzes !== 0) {
+      res.status(200).json({ analyzes });
+    } else {
+      res.status(401).json({ message: "No Analyze found in database" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured" });
+  }
+};
 
 //Done
-export const deleteAnalyze = async(req, res) => {
-    const cus = { ...req.body };
+export const deleteAnalyze = async (req, res) => {
+  const cus = { ...req.body };
   try {
     const row = await Analyze.findOne({
       where: { analyze_id: cus.analyze_id },
     });
     if (row) {
-        let retval = await Analyze.destroy({
-            where: {
-                analyze_id: cus.analyze_id,
-            },
-            force: true,
-          });
+      let retval = await Analyze.destroy({
+        where: {
+          analyze_id: cus.analyze_id,
+        },
+        force: true,
+      });
       res.status(200).json({ message: "Analyze Deleted." });
     } else {
       res.status(401).json({ message: "Cannot find analyze !" });
@@ -106,10 +99,12 @@ export const deleteAnalyze = async(req, res) => {
     console.log(err);
     res.status(500).json({ message: "An error ocurred" });
   }
-}
+};
 
-
-
-
-
-export default {createAnalyse, updateAnalyze, getAllAnalyze, getAnalyse, deleteAnalyze}
+export default {
+  createAnalyse,
+  updateAnalyze,
+  getAllAnalyze,
+  getAnalyse,
+  deleteAnalyze,
+};
