@@ -1,6 +1,5 @@
 import Models from "../models/index.js";
 import Sequelize, { Model, Op } from "sequelize";
-import QuotationForm from "../models/quotationForm.model.js";
 import GenerateWorkOrder from "../utils/generateWorkOrder.js";
 
 const create = async (new_order) => {
@@ -195,20 +194,6 @@ export const generateWorkOrder = async (req, res) => {
             },
           ],
         });
-        let A8 = parseFloat(
-          retval.dataValues.quotationItem.straight_bush.large_diameter
-        );
-        let B8 = parseFloat(
-          retval.dataValues.quotationItem.straight_bush.inner_diameter
-        );
-        let C8 = parseFloat(
-          retval.dataValues.quotationItem.straight_bush.bush_length
-        );
-        let calc =
-          ((A8 / 2) * (A8 / 2) * 3.14 * C8 * 8.6 -
-            (B8 / 2) * (B8 / 2) * 3.14 * C8 * 8.6) /
-          1000000;
-
         const new_form = {
           reference: retval.dataValues.reference,
           qty: retval.dataValues.quotationItem.unit_frequence,
@@ -222,7 +207,7 @@ export const generateWorkOrder = async (req, res) => {
           big_dia: retval.dataValues.quotationItem.straight_bush.large_diameter,
           inner: retval.dataValues.quotationItem.straight_bush.inner_diameter,
           length: retval.dataValues.quotationItem.straight_bush.bush_length,
-          calc_weigth: calc,
+          calc_weigth: retval.dataValues.quotationItem.calcRaw,
           treament_firm: retval.dataValues.quotationItem.treatment_firm,
           model_firm: retval.dataValues.quotationItem.model_firm,
           packaging: retval.dataValues.sale_confirmation.package,
@@ -272,18 +257,6 @@ export const generateWorkOrder = async (req, res) => {
             },
           ],
         });
-        let A81 = retval1.dataValues.quotationItem.bracket_bush.bigger_diameter;
-        let B81 = retval1.dataValues.quotationItem.bracket_bush.body_diameter;
-        let C81 = retval1.dataValues.quotationItem.bracket_bush.inner_diameter;
-        let D81 = retval1.dataValues.quotationItem.bracket_bush.bracket_length;
-        let E81 = retval1.dataValues.quotationItem.bracket_bush.bush_length;
-        let calc1 =
-          ((A81 / 2) * (A81 / 2) * 3.14 * D81 * 8.6 -
-            (B81 / 2) * (B81 / 2) * 3.14 * D81 * 8.6) /
-            1000000 +
-          ((B81 / 2) * (B81 / 2) * 3.14 * E81 * 8.6 -
-            (C81 / 2) * (C81 / 2) * 3.14 * E81 * 8.6) /
-            1000000;
         const new_form1 = {
           reference: retval1.dataValues.reference,
           qty: retval1.dataValues.quotationItem.unit_frequence,
@@ -299,7 +272,7 @@ export const generateWorkOrder = async (req, res) => {
           Q3: retval1.dataValues.quotationItem.bracket_bush.body_diameter,
           L1: retval1.dataValues.quotationItem.bracket_bush.bracket_length,
           L: retval1.dataValues.quotationItem.bracket_bush.bush_length,
-          calc_weigth: calc1,
+          calc_weigth: retval1.dataValues.quotationItem.calcRaw,
           treament_firm: retval1.dataValues.quotationItem.treatment_firm,
           model_firm: retval1.dataValues.quotationItem.model_firm,
           packaging: retval1.dataValues.sale_confirmation.package,
@@ -349,14 +322,6 @@ export const generateWorkOrder = async (req, res) => {
             },
           ],
         });
-        let dim2 = `${retval2.dataValues.quotationItem.plate_strip.width}*${retval2.dataValues.quotationItem.plate_strip["length"]}*${retval2.dataValues.quotationItem.plate_strip.thickness}`;
-        let calc2 = parseFloat(
-          (parseFloat(retval2.dataValues.quotationItem.plate_strip.width) *
-            parseFloat(retval2.dataValues.quotationItem.plate_strip["length"]) *
-            parseFloat(retval2.dataValues.quotationItem.plate_strip.thickness) *
-            8.6) /
-            1000000
-        );
         const new_form2 = {
           reference: retval2.dataValues.reference,
           qty: retval2.dataValues.quotationItem.unit_frequence,
@@ -370,7 +335,7 @@ export const generateWorkOrder = async (req, res) => {
           plate_model_size: retval2.dataValues.plate_model_size,
           treatment_firm_dim: retval2.dataValues.treatment_size,
           dimensions: dim2,
-          calc_weigth: calc2,
+          calc_weigth: retval2.dataValues.quotationItem.dimensions,
           treament_firm: retval2.dataValues.quotationItem.treatment_firm,
           model_firm: retval2.dataValues.quotationItem.model_firm,
           packaging: retval2.dataValues.sale_confirmation.package,
@@ -420,41 +385,6 @@ export const generateWorkOrder = async (req, res) => {
             },
           ],
         });
-
-        let A83 = parseFloat(
-          retval3.dataValues.quotationItem.middlebracket_bush.bracket_q1
-        );
-        let B83 = parseFloat(
-          retval3.dataValues.quotationItem.middlebracket_bush.bracket_q3
-        );
-        let C83 = parseFloat(
-          retval3.dataValues.quotationItem.middlebracket_bush.bracket_q2
-        );
-        let D83 = parseFloat(
-          retval3.dataValues.quotationItem.middlebracket_bush.bracket_q4
-        );
-        let E83 = parseFloat(
-          retval3.dataValues.quotationItem.middlebracket_bush.bracket_l1
-        );
-        let F83 = parseFloat(
-          retval3.dataValues.quotationItem.middlebracket_bush.bracket_l2
-        );
-        let G83 = parseFloat(
-          retval3.dataValues.quotationItem.middlebracket_bush.bracket_l3
-        );
-        let H83 = parseFloat(
-          retval3.dataValues.quotationItem.middlebracket_bush.bracket_full
-        );
-        let calc3 =
-          ((A83 / 2) * (A83 / 2) * 3.14 * 8.6 * E83 -
-            (B83 / 2) * (B83 / 2) * 3.14 * 8.6 * E83) /
-            1000000 +
-          ((A83 / 2) * (A83 / 2) * 3.14 * 8.6 * G83 -
-            (C83 / 2) * (C83 / 2) * 3.14 * 8.6 * G83) /
-            1000000 +
-          ((A83 / 2) * (A83 / 2) * 3.14 * 8.6 * F83 -
-            (D83 / 2) * (D83 / 2) * 3.14 * 8.6 * F83) /
-            1000000;
         const new_form3 = {
           reference: retval3.dataValues.reference,
           qty: retval3.dataValues.quotationItem.unit_frequence,
@@ -473,7 +403,7 @@ export const generateWorkOrder = async (req, res) => {
           L2: retval3.dataValues.quotationItem.middlebracket_bush.bracket_l2,
           L3: retval3.dataValues.quotationItem.middlebracket_bush.bracket_l3,
           L: retval3.dataValues.quotationItem.middlebracket_bush.bracket_full,
-          calc_weigth: calc3,
+          calc_weigth: retval3.dataValues.quotationItem.calcRaw,
           treament_firm: retval3.dataValues.quotationItem.treatment_firm,
           model_firm: retval3.dataValues.quotationItem.model_firm,
           packaging: retval3.dataValues.sale_confirmation.package,
@@ -522,38 +452,6 @@ export const generateWorkOrder = async (req, res) => {
             },
           ],
         });
-
-        let A84 = parseFloat(
-          retval4.dataValues.quotationItem.doublebracket_bush.bigger_diameter
-        );
-        let B84 = parseFloat(
-          retval4.dataValues.quotationItem.doublebracket_bush.body_diameter
-        );
-        let C84 = parseFloat(
-          retval4.dataValues.quotationItem.doublebracket_bush.inner_diameter
-        );
-        let D84 = parseFloat(
-          retval4.dataValues.quotationItem.doublebracket_bush.bracket_l1
-        );
-        let E84 = parseFloat(
-          retval4.dataValues.quotationItem.doublebracket_bush.bracket_l2
-        );
-        let F84 = parseFloat(
-          retval4.dataValues.quotationItem.doublebracket_bush.bracket_l3
-        );
-        let G84 = parseFloat(
-          retval4.dataValues.quotationItem.doublebracket_bush.bracket_full
-        );
-        let calc4 =
-          ((A84 / 2) * (A84 / 2) * 3.14 * 8.6 * D84 -
-            (C84 / 2) * (C84 / 2) * 3.14 * 8.6 * D84) /
-            1000000 +
-          ((B84 / 2) * (B84 / 2) * 3.14 * 8.6 * F84 -
-            (C84 / 2) * (C84 / 2) * 3.14 * 8.6 * F84) /
-            1000000 +
-          ((A84 / 2) * (A84 / 2) * 3.14 * 8.6 * E84 -
-            (C84 / 2) * (C84 / 2) * 3.14 * 8.6 * E84) /
-            1000000;
         const new_form4 = {
           reference: retval4.dataValues.reference,
           qty: retval4.dataValues.quotationItem.unit_frequence,
@@ -571,7 +469,7 @@ export const generateWorkOrder = async (req, res) => {
           L2: E84,
           L3: F84,
           L: G84,
-          calc_weigth: calc4,
+          calc_weigth: retval4.dataValues.quotationItem.calcRaw,
           treament_firm: retval4.dataValues.quotationItem.treatment_firm,
           model_firm: retval4.dataValues.quotationItem.model_firm,
           packaging: retval4.dataValues.sale_confirmation.package,

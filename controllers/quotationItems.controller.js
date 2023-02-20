@@ -6,7 +6,7 @@ const createQuotationItem = async (Model, new_item, t) => {
   return await Models.QuotationItem.create(
     {
       ...new_item.options,
-      createdAt: new Date().toLocaleDateString('fr-CA'),
+      createdAt: new Date().toLocaleDateString("fr-CA"),
     },
     {
       include: [
@@ -15,10 +15,11 @@ const createQuotationItem = async (Model, new_item, t) => {
         },
       ],
     },
-  {transaction : t});
+    { transaction: t }
+  );
 };
 
-const updateQuotationItem = async (Model,new_item, Model2, t) => {
+const updateQuotationItem = async (Model, new_item, Model2, t) => {
   let reti = await Models.QuotationItem.update(
     {
       ...new_item.options,
@@ -28,7 +29,7 @@ const updateQuotationItem = async (Model,new_item, Model2, t) => {
         item_id: new_item.item_id,
       },
     },
-    {transaction : t}
+    { transaction: t }
   );
 
   return await Model2.update(
@@ -40,7 +41,7 @@ const updateQuotationItem = async (Model,new_item, Model2, t) => {
         Item_ID: new_item.item_id,
       },
     },
-    {transaction : t}
+    { transaction: t }
   );
 };
 
@@ -48,8 +49,8 @@ const updateQuotationItem = async (Model,new_item, Model2, t) => {
 export const createItem = async (req, res) => {
   const new_item = { ...req.body };
   try {
-    const result = await db.transaction (async (t) => {
-      switch (new_item.type) {
+    const result = await db.transaction(async (t) => {
+      switch (new_item.options.itemType) {
         case "straight_bush":
           const retval = await createQuotationItem(
             Models.QuotationItem.StraigthBush,
@@ -74,7 +75,7 @@ export const createItem = async (req, res) => {
           );
           res.status(200).json({ message: " Plate/Strip Created !" });
           break;
-        case "double_bracket_bush" :
+        case "double_bracket_bush":
           const retval4 = await createQuotationItem(
             Models.QuotationItem.DoubleBracketBush,
             new_item,
@@ -82,7 +83,7 @@ export const createItem = async (req, res) => {
           );
           res.status(200).json({ message: "Double Bracket created !" });
           break;
-        case "middle_bracket_bush" : 
+        case "middle_bracket_bush":
           const retval5 = await createQuotationItem(
             Models.QuotationItem.MiddleBracketBush,
             new_item,
@@ -91,8 +92,7 @@ export const createItem = async (req, res) => {
           res.status(200).json({ message: "Middle Bracket created !" });
           break;
       }
-    })
-    
+    });
   } catch (err) {
     console.log(err);
 
@@ -110,7 +110,7 @@ export const getItems = async (req, res) => {
         [Op.or]: {
           Customer_ID: items.Customer_ID,
         },
-        isUsed : false
+        isUsed: false,
       },
       include: [
         Models.StraigthBush,
@@ -136,9 +136,8 @@ export const getByQuotation = async (req, res) => {
     const retval = await Models.QuotationItem.findAll({
       where: {
         [Op.or]: {
-         Quotation_ID: items.Quotation_ID,
+          Quotation_ID: items.Quotation_ID,
         },
-        
       },
       include: [
         Models.StraigthBush,
@@ -161,8 +160,8 @@ export const getByQuotation = async (req, res) => {
 export const getAll = async (req, res) => {
   try {
     const retval = await Models.QuotationItem.findAll({
-      where : {
-        isUsed : false,
+      where: {
+        isUsed: false,
       },
       include: [
         Models.StraigthBush,
@@ -186,7 +185,7 @@ export const updateItem = async (req, res) => {
   const new_item = { ...req.body };
   try {
     const result = await db.transaction(async (t) => {
-      switch (new_item.type) {
+      switch (new_item.options.itemType) {
         case "straight_bush":
           const retval = await updateQuotationItem(
             Models.QuotationItem.StraigthBush,
@@ -214,8 +213,8 @@ export const updateItem = async (req, res) => {
           );
           res.status(200).json({ message: " Plate/Strip Updated !" });
           break;
-        
-        case  "double_bracket_bush":
+
+        case "double_bracket_bush":
           const retval4 = await updateQuotationItem(
             Models.QuotationItem.DoubleBracketBush,
             new_item,
@@ -224,8 +223,8 @@ export const updateItem = async (req, res) => {
           );
           res.status(200).json({ message: "Double Bracket Bush Updated !" });
           break;
-        
-        case  "middle_bracket_bush":
+
+        case "middle_bracket_bush":
           const retval5 = await updateQuotationItem(
             Models.QuotationItem.MiddleBracketBush,
             new_item,
@@ -235,8 +234,7 @@ export const updateItem = async (req, res) => {
           res.status(200).json({ message: "Middle Bracket Bush Updated !" });
           break;
       }
-    })
-    
+    });
   } catch (err) {
     console.log(err);
 
@@ -252,86 +250,114 @@ export const deleteItem = async (req, res) => {
     const result = await db.transaction(async (t) => {
       switch (item.type) {
         case "straight_bush":
-          const cos = await Models.StraigthBush.destroy({
-            where: {
-              Item_ID: item.item_id,
-            },
-            force: true,
-          }, {transaction : t});
-          const retval = await Models.QuotationItem.destroy({
-            where: {
-              item_id: item.item_id,
-            },
-            force: true,
-          }, {transaction : t});
-  
-          res.status(200).json({ message: "deleted !" });
-          break;
-        case "bracket_bush":
-          const cos2 = await Models.BracketBush.destroy({
-            where: {
-              Item_ID: item.item_id,
-            },
-          }, {transaction : t});
-  
-          const retval2 = await Models.QuotationItem.destroy({
-            where: {
-              item_id: item.item_id,
-            },
-            force: true,
-          }, {transaction : t});
-          res.status(200).json({ message: "deleted !" });
-          break;
-        case "plate_strip":
-          const cos3 = await Models.PlateStrip.destroy({
-            where: {
-              Item_ID: item.item_id,
-            },
-          }, {transaction : t});
-  
-          const retval3 = await Models.QuotationItem.destroy({
-            where: {
-              item_id: item.item_id,
-            },
-            force: true,
-          }, {transaction : t});
-          res.status(200).json({ message: "deleted !" });
-          break;
-          case "double_bracket_bush":
-            const cos4 = await Models.DoubleBracketBush.destroy({
+          const cos = await Models.StraigthBush.destroy(
+            {
               where: {
                 Item_ID: item.item_id,
               },
-            },{transaction : t});
-    
-            const retval4 = await Models.QuotationItem.destroy({
+              force: true,
+            },
+            { transaction: t }
+          );
+          const retval = await Models.QuotationItem.destroy(
+            {
               where: {
                 item_id: item.item_id,
               },
               force: true,
-            },{transaction : t});
-            res.status(200).json({ message: "deleted !" });
-            break;
-          
-          case "middle_bracket_bush":
-          const cos5 = await Models.MiddleBracketBush.destroy({
-            where: {
-              Item_ID: item.item_id,
             },
-          },{transaction : t});
-  
-          const retval5 = await Models.QuotationItem.destroy({
-            where: {
-              item_id: item.item_id,
-            },
-            force: true,
-          },{transaction : t});
+            { transaction: t }
+          );
+
           res.status(200).json({ message: "deleted !" });
           break;
-        
+        case "bracket_bush":
+          const cos2 = await Models.BracketBush.destroy(
+            {
+              where: {
+                Item_ID: item.item_id,
+              },
+            },
+            { transaction: t }
+          );
+
+          const retval2 = await Models.QuotationItem.destroy(
+            {
+              where: {
+                item_id: item.item_id,
+              },
+              force: true,
+            },
+            { transaction: t }
+          );
+          res.status(200).json({ message: "deleted !" });
+          break;
+        case "plate_strip":
+          const cos3 = await Models.PlateStrip.destroy(
+            {
+              where: {
+                Item_ID: item.item_id,
+              },
+            },
+            { transaction: t }
+          );
+
+          const retval3 = await Models.QuotationItem.destroy(
+            {
+              where: {
+                item_id: item.item_id,
+              },
+              force: true,
+            },
+            { transaction: t }
+          );
+          res.status(200).json({ message: "deleted !" });
+          break;
+        case "double_bracket_bush":
+          const cos4 = await Models.DoubleBracketBush.destroy(
+            {
+              where: {
+                Item_ID: item.item_id,
+              },
+            },
+            { transaction: t }
+          );
+
+          const retval4 = await Models.QuotationItem.destroy(
+            {
+              where: {
+                item_id: item.item_id,
+              },
+              force: true,
+            },
+            { transaction: t }
+          );
+          res.status(200).json({ message: "deleted !" });
+          break;
+
+        case "middle_bracket_bush":
+          const cos5 = await Models.MiddleBracketBush.destroy(
+            {
+              where: {
+                Item_ID: item.item_id,
+              },
+            },
+            { transaction: t }
+          );
+
+          const retval5 = await Models.QuotationItem.destroy(
+            {
+              where: {
+                item_id: item.item_id,
+              },
+              force: true,
+            },
+            { transaction: t }
+          );
+          res.status(200).json({ message: "deleted !" });
+          break;
       }
-    })
-    
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "An error occured." });
@@ -341,29 +367,27 @@ export const deleteItem = async (req, res) => {
 export const setQuotation = async (req, res) => {
   const items = { ...req.body };
   try {
-    
-      let reti = await Models.QuotationItem.bulkCreate(
-        items.all,
-        {
-          updateOnDuplicate :["Quotation_ID", "deliveryTime", "description", "isUsed"]
-        },
-        
-      );
-      res.status(200).json({ message: "quotation is set for items."});
-    
-    
+    let reti = await Models.QuotationItem.bulkCreate(items.all, {
+      updateOnDuplicate: [
+        "Quotation_ID",
+        "deliveryTime",
+        "description",
+        "isUsed",
+      ],
+    });
+    res.status(200).json({ message: "quotation is set for items." });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "An error occured." });
   }
 };
 
-export const getPage = async(req, res) => {
-  const pageNumber = req.params.page
+export const getPage = async (req, res) => {
+  const pageNumber = req.params.page;
   try {
     const items = await Models.QuotationItem.findAndCountAll({
-      limit : 6,
-      offset : pageNumber * 6,
+      limit: 6,
+      offset: pageNumber * 6,
       include: [
         Models.StraigthBush,
         Models.BracketBush,
@@ -372,27 +396,22 @@ export const getPage = async(req, res) => {
         Models.MiddleBracketBush,
       ],
     });
-    
-    
+
     res.status(200).json(items);
-  }
-
-  catch(err) {
+  } catch (err) {
     console.log(err);
-    res.status(500).json({message : "An Error Occured !"});
+    res.status(500).json({ message: "An Error Occured !" });
   }
-}
+};
 
-function isEmptyObject(obj){
-  return JSON.stringify(obj) === '{}'
+function isEmptyObject(obj) {
+  return JSON.stringify(obj) === "{}";
 }
 export const getFiltered = async (req, res) => {
-  const queryParams = {...req.query}
-  if(!isEmptyObject(queryParams)) {
-    let condition  = {
-      where : {
-        
-      },
+  const queryParams = { ...req.query };
+  if (!isEmptyObject(queryParams)) {
+    let condition = {
+      where: {},
       include: [
         Models.StraigthBush,
         Models.BracketBush,
@@ -400,30 +419,35 @@ export const getFiltered = async (req, res) => {
         Models.DoubleBracketBush,
         Models.MiddleBracketBush,
       ],
-    }
+    };
     if (queryParams.account) {
-      condition.where.Customer_ID = queryParams.account
+      condition.where.Customer_ID = queryParams.account;
     }
 
     if (queryParams.date) {
-
-      condition.where.createdAt = queryParams.date
+      condition.where.createdAt = queryParams.date;
     }
-    
-    
-    
+
     try {
       const customers = await Models.QuotationItem.findAndCountAll(condition);
       res.status(200).json(customers);
-    }
-  
-    catch(err) {
+    } catch (err) {
       console.error(err);
-      res.status(500).json({message : "An Error Occured !"});
+      res.status(500).json({ message: "An Error Occured !" });
     }
   } else {
-    res.redirect("/api/quotation-items/get-page/0")
+    res.redirect("/api/quotation-items/get-page/0");
   }
-}
+};
 
-export default {getPage, getFiltered, createItem, getItems, getAll, updateItem, deleteItem, setQuotation, getByQuotation };
+export default {
+  getPage,
+  getFiltered,
+  createItem,
+  getItems,
+  getAll,
+  updateItem,
+  deleteItem,
+  setQuotation,
+  getByQuotation,
+};
