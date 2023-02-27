@@ -4,29 +4,31 @@ import CustomerAdress from "../models/customerAdress.model.js";
 import Models from "../models/index.js";
 import { Op } from "sequelize";
 import db from "../config/database.js";
+import { isEmptyObject } from "../utils/isEmptyObject.js";
 
 export const createCustomer = async (req, res) => {
   try {
     const result = await db.transaction(async (t) => {
       const newCustomer = { ...req.body };
-      const ncus = await Customer.create(newCustomer.customer, {
-        transaction: t,
-      });
-      const newTax = await TaxInfo.create(
+      const created = await Customer.create(
         {
-          ...newCustomer.taxinfo,
-          Customer_ID: newCustomer.customer.account_id,
-        },
-        { transaction: t }
-      );
-      const newAdd = await CustomerAdress.create(
-        {
-          ...newCustomer.adressinfo,
-          Customer_ID: newCustomer.customer.account_id,
-        },
-        { transaction: t }
-      );
+          ...newCustomer.customer,
+          tax_info: {
+            ...newCustomer.taxinfo,
+          },
 
+          customer_adress: {
+            ...newCustomer.adressinfo,
+          },
+        },
+        {
+          transaction: t,
+          include: [
+            { model: Models.CustomerAdress },
+            { model: Models.TaxInfo },
+          ],
+        }
+      );
       return 0;
     });
 
@@ -36,7 +38,6 @@ export const createCustomer = async (req, res) => {
   }
 };
 
-//Done
 export const updateCustomer = async (req, res) => {
   const customer = { ...req.body };
   try {
@@ -47,70 +48,31 @@ export const updateCustomer = async (req, res) => {
           { transaction: t }
         )
       ) {
-        let retval = await Customer.update(
-          customer.customer,
+        const update = await Customer.update(
+          {
+            ...customer.customer,
+            tax_info: {
+              ...customer.taxinfo,
+            },
+            customer_adress: {
+              ...customer.adressinfo,
+            },
+          },
           {
             where: { account_id: customer.account_id },
           },
-          { transaction: t }
+          {
+            transaction: t,
+            include: [
+              Models.TaxInfo,
+              Models.CustomerAdress,
+              Models.QuotationForm,
+              Models.QuotationItem,
+              Models.SaleConfirmation,
+              Models.WorkOrder,
+            ],
+          }
         );
-        retval = await TaxInfo.update(
-          customer.taxinfo,
-          {
-            where: { Customer_ID: customer.account_id },
-          },
-          { transaction: t }
-        );
-        retval = await CustomerAdress.update(
-          customer.adressinfo,
-          {
-            where: { Customer_ID: customer.account_id },
-          },
-          { transaction: t }
-        );
-
-        //others
-
-        retval = await Models.QuotationItem.update(
-          {
-            Customer_ID: customer.customer.account_id,
-          },
-          {
-            where: { Customer_ID: customer.account_id },
-          },
-          { transaction: t }
-        );
-
-        retval = await Models.QuotationForm.update(
-          {
-            Customer_ID: customer.customer.account_id,
-          },
-          {
-            where: { Customer_ID: customer.account_id },
-          },
-          { transaction: t }
-        );
-
-        retval = await Models.SaleConfirmation.update(
-          {
-            Customer_ID: customer.customer.account_id,
-          },
-          {
-            where: { Customer_ID: customer.account_id },
-          },
-          { transaction: t }
-        );
-
-        retval = await Models.WorkOrder.update(
-          {
-            Customer_ID: customer.customer.account_id,
-          },
-          {
-            where: { Customer_ID: customer.account_id },
-          },
-          { transaction: t }
-        );
-
         res.status(200).json({ message: "Customer updated" });
       } else {
         res.status(401).json({ message: "Cannot find customer" });
@@ -121,7 +83,6 @@ export const updateCustomer = async (req, res) => {
   }
 };
 
-//Done
 export const getCustomer = async (req, res) => {
   const q = { ...req.body };
 
@@ -144,12 +105,9 @@ export const getCustomer = async (req, res) => {
   }
 };
 
-//Done
 export const getAllCustomers = async (req, res) => {
   try {
-    const customers = await Customer.findAll({
-      include: [TaxInfo, CustomerAdress],
-    });
+    const customers = await Customer.findAll({ attributes: ["account_id"] });
     if (customers !== 0) {
       res.status(200).json({ customers });
     } else {
@@ -158,60 +116,6 @@ export const getAllCustomers = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "An error occured" });
-  }
-};
-
-// Done
-export const deleteCustomer = async (req, res) => {
-  const cus = { ...req.body };
-  try {
-    const result = await db.transaction(async (t) => {
-      const row = await Customer.findOne(
-        {
-          where: { account_id: cus.account_id },
-        },
-        { transaction: t }
-      );
-      if (row) {
-        let retval = await TaxInfo.destroy(
-          {
-            where: {
-              Customer_ID: cus.account_id,
-            },
-
-            force: true,
-          },
-          { transaction: t }
-        );
-        retval = await CustomerAdress.destroy(
-          {
-            where: {
-              Customer_ID: cus.account_id,
-            },
-
-            force: true,
-          },
-          { transaction: t }
-        );
-        retval = await Customer.destroy(
-          {
-            where: {
-              account_id: cus.account_id,
-            },
-
-            force: true,
-          },
-          { transaction: t }
-        );
-
-        res.status(200).json({ message: "Customer Deleted." });
-      } else {
-        res.status(401).json({ message: "Cannot find customer !" });
-      }
-    });
-  } catch (err) {
-    console.log(err);
-    res.send(500).json({ message: "An error ocurred" });
   }
 };
 
@@ -230,30 +134,12 @@ export const getPage = async (req, res) => {
   }
 };
 
-function isEmptyObject(obj) {
-  return JSON.stringify(obj) === "{}";
-}
-
 export const getFiltered = async (req, res) => {
   const queryParams = { ...req.query };
   if (!isEmptyObject(queryParams)) {
     let condition = {
-      where: {},
+      where: { ...queryParams },
     };
-    if (queryParams.account) {
-      condition.where.account_id = queryParams.account;
-    }
-
-    if (queryParams.title) {
-      condition.where.account_title = { [Op.like]: `%${queryParams.title}%` };
-    }
-
-    if (queryParams.related) {
-      condition.where.account_related = {
-        [Op.like]: `%${queryParams.related}%`,
-      };
-    }
-
     try {
       const customers = await Models.Customer.findAndCountAll(condition);
       res.status(200).json(customers);
@@ -272,6 +158,5 @@ export default {
   getCustomer,
   getFiltered,
   getAllCustomers,
-  deleteCustomer,
   getPage,
 };
