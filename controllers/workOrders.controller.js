@@ -199,6 +199,7 @@ export const generateWorkOrder = async (req, res) => {
           qty: retval.dataValues.quotationItem.unit_frequence,
           deliveryDate: retval.dataValues.sale_confirmation.deliveryDate,
           analysis: retval.dataValues.quotationItem.analyze.analyze_Name,
+          company: retval.dataValues.company === "VNT" ? "vnt" : "bilgesin",
           customer_reference:
             retval.dataValues.sale_confirmation.customerReference,
           description: retval.dataValues.sale_confirmation.description,
@@ -210,8 +211,11 @@ export const generateWorkOrder = async (req, res) => {
           calc_weigth: retval.dataValues.quotationItem.calcRaw,
           treament_firm: retval.dataValues.quotationItem.treatment_firm,
           model_firm: retval.dataValues.quotationItem.model_firm,
-          packaging: retval.dataValues.sale_confirmation.package,
+          packaging: retval.dataValues.sale_confirmation.package
+            ? "Var"
+            : "Yok",
           hasPackage: retval.dataValues.sale_confirmation.package,
+          company: retval.dataValues.company,
           certificates: retval.dataValues.sale_confirmation.certificates.map(
             (item) => {
               return {
@@ -221,10 +225,7 @@ export const generateWorkOrder = async (req, res) => {
           ),
           revision: retval.dataValues.revision,
         };
-        const buf = await GenerateWorkOrder(
-          new_form,
-          "straightbush_template.docx"
-        );
+        const buf = await GenerateWorkOrder(new_form, "straightbush_template");
         let options = {
           root: "./files",
         };
@@ -275,8 +276,11 @@ export const generateWorkOrder = async (req, res) => {
           calc_weigth: retval1.dataValues.quotationItem.calcRaw,
           treament_firm: retval1.dataValues.quotationItem.treatment_firm,
           model_firm: retval1.dataValues.quotationItem.model_firm,
-          packaging: retval1.dataValues.sale_confirmation.package,
+          packaging: retval1.dataValues.sale_confirmation.package
+            ? "Var"
+            : "Yok",
           hasPackage: retval1.dataValues.sale_confirmation.package,
+          company: retval1.dataValues.company,
           certificates: retval1.dataValues.sale_confirmation.certificates.map(
             (item) => {
               return {
@@ -288,7 +292,7 @@ export const generateWorkOrder = async (req, res) => {
         };
         const buf1 = await GenerateWorkOrder(
           new_form1,
-          "bracket_bush_template.docx"
+          "bracket_bush_template"
         );
         let options1 = {
           root: "./files",
@@ -338,8 +342,11 @@ export const generateWorkOrder = async (req, res) => {
           calc_weigth: retval2.dataValues.quotationItem.dimensions,
           treament_firm: retval2.dataValues.quotationItem.treatment_firm,
           model_firm: retval2.dataValues.quotationItem.model_firm,
-          packaging: retval2.dataValues.sale_confirmation.package,
+          packaging: retval2.dataValues.sale_confirmation.package
+            ? "Var"
+            : "Yok",
           hasPackage: retval2.dataValues.sale_confirmation.package,
+          company: retval2.dataValues.company,
           certificates: retval2.dataValues.sale_confirmation.certificates.map(
             (item) => {
               return {
@@ -349,10 +356,7 @@ export const generateWorkOrder = async (req, res) => {
           ),
           revision: retval2.dataValues.revision,
         };
-        const buf2 = await GenerateWorkOrder(
-          new_form2,
-          "plate_strip_template.docx"
-        );
+        const buf2 = await GenerateWorkOrder(new_form2, "plate_strip_template");
         let options2 = {
           root: "./files",
         };
@@ -402,11 +406,14 @@ export const generateWorkOrder = async (req, res) => {
           L1: retval3.dataValues.quotationItem.middlebracket_bush.bracket_l1,
           L2: retval3.dataValues.quotationItem.middlebracket_bush.bracket_l2,
           L3: retval3.dataValues.quotationItem.middlebracket_bush.bracket_l3,
+          company: retval3.dataValues.company,
           L: retval3.dataValues.quotationItem.middlebracket_bush.bracket_full,
           calc_weigth: retval3.dataValues.quotationItem.calcRaw,
           treament_firm: retval3.dataValues.quotationItem.treatment_firm,
           model_firm: retval3.dataValues.quotationItem.model_firm,
-          packaging: retval3.dataValues.sale_confirmation.package,
+          packaging: retval3.dataValues.sale_confirmation.package
+            ? "Var"
+            : "Yok",
           hasPackage: retval3.dataValues.sale_confirmation.package,
           certificates: retval3.dataValues.sale_confirmation.certificates.map(
             (item) => {
@@ -419,7 +426,7 @@ export const generateWorkOrder = async (req, res) => {
         };
         const buf3 = await GenerateWorkOrder(
           new_form3,
-          "middlebracket_bush_template.docx"
+          "middlebracket_bush_template"
         );
         let options3 = {
           root: "./files",
@@ -472,8 +479,11 @@ export const generateWorkOrder = async (req, res) => {
           calc_weigth: retval4.dataValues.quotationItem.calcRaw,
           treament_firm: retval4.dataValues.quotationItem.treatment_firm,
           model_firm: retval4.dataValues.quotationItem.model_firm,
-          packaging: retval4.dataValues.sale_confirmation.package,
+          packaging: retval4.dataValues.sale_confirmation.package
+            ? "Var"
+            : "Yok",
           hasPackage: retval4.dataValues.sale_confirmation.package,
+          company: retval4.dataValues.company,
           certificates: retval4.dataValues.sale_confirmation.certificates.map(
             (item) => {
               return {
@@ -485,7 +495,7 @@ export const generateWorkOrder = async (req, res) => {
         };
         const buf4 = await GenerateWorkOrder(
           new_form4,
-          "doublebracket_bush_template.docx"
+          "doublebracket_bush_template"
         );
         let options4 = {
           root: "./files",
@@ -696,7 +706,7 @@ export const getFiltered = async (req, res) => {
       res.status(500).json({ message: "An Error Occured !" });
     }
   } else {
-    res.sendStatus(401);
+    res.redirect("/api/work-order/get-page/0");
   }
 };
 
