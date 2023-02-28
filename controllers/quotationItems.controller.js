@@ -2,6 +2,14 @@ import Models from "../models/index.js";
 import { Op } from "sequelize";
 import db from "../config/database.js";
 
+const modelMap = {
+  straight_bush: Models.QuotationItem.StraigthBush,
+  plate_strip: Models.QuotationItem.PlateStrip,
+  bracket_bush: Models.QuotationItem.BracketBush,
+  double_bracket_bush: Models.QuotationItem.DoubleBracketBush,
+  middle_bracket_bush: Models.QuotationItem.MiddleBracketBush,
+};
+
 const createQuotationItem = async (Model, new_item, t) => {
   return await Models.QuotationItem.create(
     {
@@ -75,7 +83,7 @@ export const createItem = async (req, res) => {
           );
           res.status(200).json({ message: " Plate/Strip Created !" });
           break;
-        case "double_bracket_bush":
+        case "doublebracket_bush":
           const retval4 = await createQuotationItem(
             Models.QuotationItem.DoubleBracketBush,
             new_item,
@@ -83,7 +91,7 @@ export const createItem = async (req, res) => {
           );
           res.status(200).json({ message: "Double Bracket created !" });
           break;
-        case "middle_bracket_bush":
+        case "middlebracket_bush":
           const retval5 = await createQuotationItem(
             Models.QuotationItem.MiddleBracketBush,
             new_item,
@@ -111,6 +119,36 @@ export const getItems = async (req, res) => {
           Customer_ID: items.Customer_ID,
         },
         isUsed: false,
+      },
+      include: [
+        Models.StraigthBush,
+        Models.BracketBush,
+        Models.PlateStrip,
+        Models.DoubleBracketBush,
+        Models.MiddleBracketBush,
+        Models.Analyze,
+      ],
+    });
+
+    res.status(200).json(retval);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured." });
+  }
+};
+
+export const getByQuotAndID = async (req, res) => {
+  const items = { ...req.body };
+
+  try {
+    const retval = await Models.QuotationItem.findAll({
+      where: {
+        [Op.or]: {
+          Quotation_ID: items.Quotation_ID,
+        },
+        [Op.or]: {
+          Customer_ID: items.Customer_ID,
+        },
       },
       include: [
         Models.StraigthBush,
@@ -367,15 +405,56 @@ export const deleteItem = async (req, res) => {
 export const setQuotation = async (req, res) => {
   const items = { ...req.body };
   try {
-    let reti = await Models.QuotationItem.bulkCreate(items.all, {
-      updateOnDuplicate: [
-        "Quotation_ID",
-        "deliveryTime",
-        "description",
-        "isUsed",
-      ],
+    const tranres = db.transaction(async (t) => {
+      items.all.map(async (item) => {
+        let row = await Models.QuotationItem.findOne({
+          where: {
+            item_id: item.item_id,
+          },
+          include: [
+            Models.StraigthBush,
+            Models.BracketBush,
+            Models.PlateStrip,
+            Models.DoubleBracketBush,
+            Models.MiddleBracketBush,
+          ],
+        });
+        if (row.dataValues.isUsed) {
+          let map = row.dataValues.itemType;
+          delete row.dataValues.item_id;
+          delete item.item_id;
+          delete row.dataValues[map].dataValues.id;
+          const data = {
+            options: {
+              ...row.dataValues,
+              ...item,
+            },
+          };
+
+          const results = await createQuotationItem(
+            modelMap[`${data.options.itemType}`],
+            data,
+            t
+          );
+        } else {
+          let new_data = [];
+          new_data.push(item);
+
+          if (new_data.length !== 0) {
+            let reti = await Models.QuotationItem.bulkCreate(new_data, {
+              updateOnDuplicate: [
+                "Quotation_ID",
+                "deliveryTime",
+                "description",
+                "isUsed",
+              ],
+            });
+          }
+        }
+      });
+
+      res.status(200).json({ message: "quotation is set for items." });
     });
-    res.status(200).json({ message: "quotation is set for items." });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "An error occured." });
@@ -446,6 +525,7 @@ export default {
   createItem,
   getItems,
   getAll,
+  getByQuotAndID,
   updateItem,
   deleteItem,
   setQuotation,
