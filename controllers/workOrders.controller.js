@@ -169,7 +169,7 @@ export const generateWorkOrder = async (req, res) => {
   try {
     switch (item.type) {
       //DONE
-      case "straigth_bush":
+      case "straight_bush":
         const retval = await Models.WorkOrder.findOne({
           where: {
             workorder_ID: item.id,
@@ -338,8 +338,8 @@ export const generateWorkOrder = async (req, res) => {
           date: `${retval2.dataValues.day}-${retval2.dataValues.month}-${retval2.dataValues.year}`,
           plate_model_size: retval2.dataValues.plate_model_size,
           treatment_firm_dim: retval2.dataValues.treatment_size,
-          dimensions: dim2,
-          calc_weigth: retval2.dataValues.quotationItem.dimensions,
+          dimensions: retval2.dataValues.quotationItem.dimensions,
+          calc_weigth: retval2.dataValues.quotationItem.calcRaw,
           treament_firm: retval2.dataValues.quotationItem.treatment_firm,
           model_firm: retval2.dataValues.quotationItem.model_firm,
           packaging: retval2.dataValues.sale_confirmation.package
@@ -469,13 +469,15 @@ export const generateWorkOrder = async (req, res) => {
           description: retval4.dataValues.sale_confirmation.description,
           specials: retval4.dataValues.sale_confirmation.specialOffers,
           date: `${retval4.dataValues.day}-${retval4.dataValues.month}-${retval4.dataValues.year}`,
-          Q1: A84,
-          Q2: C84,
-          Q3: B84,
-          L1: D84,
-          L2: E84,
-          L3: F84,
-          L: G84,
+          Q1: retval4.dataValues.quotationItem.doublebracket_bush
+            .bigger_diameter,
+          Q2: retval4.dataValues.quotationItem.doublebracket_bush.body_diameter,
+          Q3: retval4.dataValues.quotationItem.doublebracket_bush
+            .inner_diameter,
+          L1: retval4.dataValues.quotationItem.doublebracket_bush.bracket_l1,
+          L2: retval4.dataValues.quotationItem.doublebracket_bush.bracket_l2,
+          L3: retval4.dataValues.quotationItem.doublebracket_bush.bracket_l3,
+          L: retval4.dataValues.quotationItem.doublebracket_bush.bracket_full,
           calc_weigth: retval4.dataValues.quotationItem.calcRaw,
           treament_firm: retval4.dataValues.quotationItem.treatment_firm,
           model_firm: retval4.dataValues.quotationItem.model_firm,
