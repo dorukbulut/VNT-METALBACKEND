@@ -77,34 +77,9 @@ export const getAllAnalyze = async (req, res) => {
   }
 };
 
-//Done
-export const deleteAnalyze = async (req, res) => {
-  const cus = { ...req.body };
-  try {
-    const row = await Analyze.findOne({
-      where: { analyze_id: cus.analyze_id },
-    });
-    if (row) {
-      let retval = await Analyze.destroy({
-        where: {
-          analyze_id: cus.analyze_id,
-        },
-        force: true,
-      });
-      res.status(200).json({ message: "Analyze Deleted." });
-    } else {
-      res.status(401).json({ message: "Cannot find analyze !" });
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "An error ocurred" });
-  }
-};
-
 export default {
   createAnalyse,
   updateAnalyze,
   getAllAnalyze,
   getAnalyse,
-  deleteAnalyze,
 };

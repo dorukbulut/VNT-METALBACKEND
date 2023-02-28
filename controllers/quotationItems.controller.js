@@ -1,14 +1,8 @@
 import Models from "../models/index.js";
 import { Op } from "sequelize";
 import db from "../config/database.js";
-
-const modelMap = {
-  straight_bush: Models.QuotationItem.StraigthBush,
-  plate_strip: Models.QuotationItem.PlateStrip,
-  bracket_bush: Models.QuotationItem.BracketBush,
-  double_bracket_bush: Models.QuotationItem.DoubleBracketBush,
-  middle_bracket_bush: Models.QuotationItem.MiddleBracketBush,
-};
+import { modelMap } from "../utils/mappers.js";
+import { isEmptyObject } from "../utils/isEmptyObject.js";
 
 const createQuotationItem = async (Model, new_item, t) => {
   return await Models.QuotationItem.create(
@@ -58,52 +52,14 @@ export const createItem = async (req, res) => {
   const new_item = { ...req.body };
   try {
     const result = await db.transaction(async (t) => {
-      switch (new_item.options.itemType) {
-        case "straight_bush":
-          const retval = await createQuotationItem(
-            Models.QuotationItem.StraigthBush,
-            new_item,
-            t
-          );
-          res.status(200).json({ message: "Straight Bush Created !" });
-          break;
-        case "bracket_bush":
-          const retval2 = await createQuotationItem(
-            Models.QuotationItem.BracketBush,
-            new_item,
-            t
-          );
-          res.status(200).json({ message: "Bracket Bush Created !" });
-          break;
-        case "plate_strip":
-          const retval3 = await createQuotationItem(
-            Models.QuotationItem.PlateStrip,
-            new_item,
-            t
-          );
-          res.status(200).json({ message: " Plate/Strip Created !" });
-          break;
-        case "doublebracket_bush":
-          const retval4 = await createQuotationItem(
-            Models.QuotationItem.DoubleBracketBush,
-            new_item,
-            t
-          );
-          res.status(200).json({ message: "Double Bracket created !" });
-          break;
-        case "middlebracket_bush":
-          const retval5 = await createQuotationItem(
-            Models.QuotationItem.MiddleBracketBush,
-            new_item,
-            t
-          );
-          res.status(200).json({ message: "Middle Bracket created !" });
-          break;
-      }
+      const retval = await createQuotationItem(
+        modelMap[new_item.options.itemType],
+        new_item,
+        t
+      );
+      res.status(200).json({ message: "Createa Item" });
     });
   } catch (err) {
-    console.log(err);
-
     res.status(500).json({ message: "An error occured." });
   }
 };
@@ -223,181 +179,16 @@ export const updateItem = async (req, res) => {
   const new_item = { ...req.body };
   try {
     const result = await db.transaction(async (t) => {
-      switch (new_item.options.itemType) {
-        case "straight_bush":
-          const retval = await updateQuotationItem(
-            Models.QuotationItem.StraigthBush,
-            new_item,
-            Models.StraigthBush,
-            t
-          );
-          res.status(200).json({ message: "Straight Bush Updated !" });
-          break;
-        case "bracket_bush":
-          const retval2 = await updateQuotationItem(
-            Models.QuotationItem.BracketBush,
-            new_item,
-            Models.BracketBush,
-            t
-          );
-          res.status(200).json({ message: "Bracket Bush Updated !" });
-          break;
-        case "plate_strip":
-          const retval3 = await updateQuotationItem(
-            Models.QuotationItem.PlateStrip,
-            new_item,
-            Models.PlateStrip,
-            t
-          );
-          res.status(200).json({ message: " Plate/Strip Updated !" });
-          break;
-
-        case "double_bracket_bush":
-          const retval4 = await updateQuotationItem(
-            Models.QuotationItem.DoubleBracketBush,
-            new_item,
-            Models.DoubleBracketBush,
-            t
-          );
-          res.status(200).json({ message: "Double Bracket Bush Updated !" });
-          break;
-
-        case "middle_bracket_bush":
-          const retval5 = await updateQuotationItem(
-            Models.QuotationItem.MiddleBracketBush,
-            new_item,
-            Models.MiddleBracketBush,
-            t
-          );
-          res.status(200).json({ message: "Middle Bracket Bush Updated !" });
-          break;
-      }
+      const retval = await updateQuotationItem(
+        modelMap[new_item.options.itemType],
+        new_item,
+        t
+      );
+      res.status(200).json({ message: "Update Item" });
     });
   } catch (err) {
     console.log(err);
 
-    res.status(500).json({ message: "An error occured." });
-  }
-};
-
-//DONE
-export const deleteItem = async (req, res) => {
-  const item = { ...req.body };
-
-  try {
-    const result = await db.transaction(async (t) => {
-      switch (item.type) {
-        case "straight_bush":
-          const cos = await Models.StraigthBush.destroy(
-            {
-              where: {
-                Item_ID: item.item_id,
-              },
-              force: true,
-            },
-            { transaction: t }
-          );
-          const retval = await Models.QuotationItem.destroy(
-            {
-              where: {
-                item_id: item.item_id,
-              },
-              force: true,
-            },
-            { transaction: t }
-          );
-
-          res.status(200).json({ message: "deleted !" });
-          break;
-        case "bracket_bush":
-          const cos2 = await Models.BracketBush.destroy(
-            {
-              where: {
-                Item_ID: item.item_id,
-              },
-            },
-            { transaction: t }
-          );
-
-          const retval2 = await Models.QuotationItem.destroy(
-            {
-              where: {
-                item_id: item.item_id,
-              },
-              force: true,
-            },
-            { transaction: t }
-          );
-          res.status(200).json({ message: "deleted !" });
-          break;
-        case "plate_strip":
-          const cos3 = await Models.PlateStrip.destroy(
-            {
-              where: {
-                Item_ID: item.item_id,
-              },
-            },
-            { transaction: t }
-          );
-
-          const retval3 = await Models.QuotationItem.destroy(
-            {
-              where: {
-                item_id: item.item_id,
-              },
-              force: true,
-            },
-            { transaction: t }
-          );
-          res.status(200).json({ message: "deleted !" });
-          break;
-        case "double_bracket_bush":
-          const cos4 = await Models.DoubleBracketBush.destroy(
-            {
-              where: {
-                Item_ID: item.item_id,
-              },
-            },
-            { transaction: t }
-          );
-
-          const retval4 = await Models.QuotationItem.destroy(
-            {
-              where: {
-                item_id: item.item_id,
-              },
-              force: true,
-            },
-            { transaction: t }
-          );
-          res.status(200).json({ message: "deleted !" });
-          break;
-
-        case "middle_bracket_bush":
-          const cos5 = await Models.MiddleBracketBush.destroy(
-            {
-              where: {
-                Item_ID: item.item_id,
-              },
-            },
-            { transaction: t }
-          );
-
-          const retval5 = await Models.QuotationItem.destroy(
-            {
-              where: {
-                item_id: item.item_id,
-              },
-              force: true,
-            },
-            { transaction: t }
-          );
-          res.status(200).json({ message: "deleted !" });
-          break;
-      }
-    });
-  } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "An error occured." });
   }
 };
@@ -483,9 +274,6 @@ export const getPage = async (req, res) => {
   }
 };
 
-function isEmptyObject(obj) {
-  return JSON.stringify(obj) === "{}";
-}
 export const getFiltered = async (req, res) => {
   const queryParams = { ...req.query };
   if (!isEmptyObject(queryParams)) {
@@ -527,7 +315,6 @@ export default {
   getAll,
   getByQuotAndID,
   updateItem,
-  deleteItem,
   setQuotation,
   getByQuotation,
 };
