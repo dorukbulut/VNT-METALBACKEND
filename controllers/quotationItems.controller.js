@@ -258,13 +258,6 @@ export const getPage = async (req, res) => {
     const items = await Models.QuotationItem.findAndCountAll({
       limit: 6,
       offset: pageNumber * 6,
-      include: [
-        Models.StraigthBush,
-        Models.BracketBush,
-        Models.PlateStrip,
-        Models.DoubleBracketBush,
-        Models.MiddleBracketBush,
-      ],
     });
 
     res.status(200).json(items);
@@ -278,22 +271,8 @@ export const getFiltered = async (req, res) => {
   const queryParams = { ...req.query };
   if (!isEmptyObject(queryParams)) {
     let condition = {
-      where: {},
-      include: [
-        Models.StraigthBush,
-        Models.BracketBush,
-        Models.PlateStrip,
-        Models.DoubleBracketBush,
-        Models.MiddleBracketBush,
-      ],
+      where: { ...queryParams },
     };
-    if (queryParams.account) {
-      condition.where.Customer_ID = queryParams.account;
-    }
-
-    if (queryParams.date) {
-      condition.where.createdAt = queryParams.date;
-    }
 
     try {
       const customers = await Models.QuotationItem.findAndCountAll(condition);
