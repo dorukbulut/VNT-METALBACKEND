@@ -140,6 +140,7 @@ export const generateForm = async (req, res) => {
           p_unit: item.unit_price,
           p_n_des: Data.dataValues.description,
           p_calc: item.calcRaw,
+          currency: item.currency,
         };
       }),
       firm_name: Data.dataValues.quotationItem.treatment_firm,
