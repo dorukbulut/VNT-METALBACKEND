@@ -125,6 +125,7 @@ export const getPage = async (req, res) => {
     const customers = await Models.Customer.findAndCountAll({
       limit: 6,
       offset: pageNumber * 6,
+      attributes: ["account_id", "account_title", "account_related"],
     });
 
     res.status(200).json(customers);
