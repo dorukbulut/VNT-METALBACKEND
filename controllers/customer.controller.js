@@ -5,6 +5,7 @@ import Models from "../models/index.js";
 import { Op } from "sequelize";
 import db from "../config/database.js";
 import { isEmptyObject } from "../utils/isEmptyObject.js";
+import { removeSpace } from "../utils/removeSpace.js";
 
 export const createCustomer = async (req, res) => {
   try {
@@ -139,7 +140,7 @@ export const getFiltered = async (req, res) => {
   const queryParams = { ...req.query };
   if (!isEmptyObject(queryParams)) {
     let condition = {
-      where: { ...queryParams },
+      where: { ...removeSpace(queryParams) },
     };
     try {
       const customers = await Models.Customer.findAndCountAll(condition);
