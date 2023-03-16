@@ -17,7 +17,6 @@ export const createAnalyse = async (req, res) => {
 export const updateAnalyze = async (req, res) => {
   try {
     const analyse = { ...req.body };
-
     if (
       await Analyze.findOne({
         where: {
@@ -36,6 +35,7 @@ export const updateAnalyze = async (req, res) => {
       res.status(401).json({ message: "Cannot find analyze" });
     }
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "An error occurred." });
   }
 };
