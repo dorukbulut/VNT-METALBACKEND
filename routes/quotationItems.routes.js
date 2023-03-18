@@ -6,6 +6,7 @@ import quotationItemsController from "../controllers/quotationItems.controller.j
 router.post("/create", quotationItemsController.createItem);
 router.post("/get", quotationItemsController.getItems);
 router.post("/get-quo", quotationItemsController.getByQuotation);
+router.post("/get-id", quotationItemsController.getByItemID);
 router.post("/getitems", quotationItemsController.getByQuotAndID);
 router.get("/all", quotationItemsController.getAll);
 router.post("/update", quotationItemsController.updateItem);

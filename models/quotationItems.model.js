@@ -73,7 +73,7 @@ const QuotationItems = db.define(
     },
 
     createdAt: {
-      type: Sequelize.STRING,
+      type: Sequelize.DATE,
     },
     kgPrice: {
       type: Sequelize.DECIMAL,

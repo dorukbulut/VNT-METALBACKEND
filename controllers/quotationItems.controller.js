@@ -9,7 +9,7 @@ const createQuotationItem = async (Model, new_item, t) => {
   return await Models.QuotationItem.create(
     {
       ...new_item.options,
-      createdAt: new Date().toLocaleDateString("fr-CA"),
+      createdAt: new Date(),
     },
     {
       include: [
@@ -61,6 +61,8 @@ export const createItem = async (req, res) => {
       res.status(200).json({ message: "Createa Item" });
     });
   } catch (err) {
+    console.log(err);
+
     res.status(500).json({ message: "An error occured." });
   }
 };
@@ -76,6 +78,42 @@ export const getItems = async (req, res) => {
           Customer_ID: items.Customer_ID,
         },
         isUsed: false,
+      },
+      order: [["createdAt", "DESC"]],
+      include: [
+        Models.StraigthBush,
+        Models.BracketBush,
+        Models.PlateStrip,
+        Models.DoubleBracketBush,
+        Models.MiddleBracketBush,
+        Models.Analyze,
+      ],
+    });
+
+    // retval.sort(function (a, b) {
+    //   // Turn your strings into dates, and then subtract them
+    //   // to get a value that is either negative, positive, or zero.
+    //   return new Date(b.createdAt) - new Date(a.createdAt);
+    // });
+
+    console.log();
+
+    res.status(200).json(retval);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured." });
+  }
+};
+
+export const getByItemID = async (req, res) => {
+  const items = { ...req.body };
+
+  try {
+    const retval = await Models.QuotationItem.findAll({
+      where: {
+        [Op.or]: {
+          item_id: items.item_id,
+        },
       },
       include: [
         Models.StraigthBush,
@@ -101,7 +139,7 @@ export const getByQuotAndID = async (req, res) => {
     const retval = await Models.QuotationItem.findAll({
       where: {
         [Op.or]: {
-          Quotation_ID: items.Quotation_ID,
+          Quotation_ID: items.item_id,
         },
         [Op.or]: {
           Customer_ID: items.Customer_ID,
@@ -293,6 +331,7 @@ export default {
   createItem,
   getItems,
   getAll,
+  getByItemID,
   getByQuotAndID,
   updateItem,
   setQuotation,
