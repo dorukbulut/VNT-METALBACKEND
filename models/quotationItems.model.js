@@ -35,7 +35,7 @@ const QuotationItems = db.define(
       type: Sequelize.DECIMAL,
     },
     deliveryTime: {
-      type: Sequelize.DECIMAL,
+      type: Sequelize.STRING,
     },
     treatment_firm: {
       type: Sequelize.STRING,
