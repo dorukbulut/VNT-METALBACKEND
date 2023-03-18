@@ -22,10 +22,11 @@ const createQuotationItem = async (Model, new_item, t) => {
   );
 };
 
-const updateQuotationItem = async (Model, new_item, Model2, t) => {
+const updateQuotationItem = async (Model, new_item, type_ops, t) => {
   let reti = await Models.QuotationItem.update(
     {
       ...new_item.options,
+      createdAt: new Date(),
     },
     {
       where: {
@@ -35,17 +36,10 @@ const updateQuotationItem = async (Model, new_item, Model2, t) => {
     { transaction: t }
   );
 
-  return await Model2.update(
-    {
-      ...new_item.type_options,
-    },
-    {
-      where: {
-        Item_ID: new_item.item_id,
-      },
-    },
-    { transaction: t }
-  );
+  return await Model.upsert({
+    ...type_ops,
+    Item_ID: new_item.item_id,
+  });
 };
 
 //DONE
@@ -218,11 +212,28 @@ export const updateItem = async (req, res) => {
   const new_item = { ...req.body };
   try {
     const result = await db.transaction(async (t) => {
-      const retval = await updateQuotationItem(
+      await Models.QuotationItem.destroy(
+        {
+          where: {
+            item_id: new_item.item_id,
+          },
+          include: [
+            {
+              association: modelMap[new_item.oldType],
+            },
+          ],
+          force: true,
+        },
+
+        { transaction: t }
+      );
+
+      const retval = await createQuotationItem(
         modelMap[new_item.options.itemType],
         new_item,
         t
       );
+
       res.status(200).json({ message: "Update Item" });
     });
   } catch (err) {
