@@ -33,6 +33,7 @@ export const createForm = async (req, res) => {
       day: parseInt(new Date().getDate()),
       month: parseInt(new Date().getMonth() + 1),
       year: parseInt(new Date().getFullYear()),
+      updatedAt: new Date(),
       revision: 0,
       reference: `Q-${
         new_form.options.Customer_ID
@@ -240,6 +241,7 @@ export const updateForms = async (req, res) => {
       day: parseInt(new Date().getDate()),
       month: parseInt(new Date().getMonth() + 1),
       year: parseInt(new Date().getFullYear()),
+      updatedAt: new Date(),
       Delivery_ID: newDelivery.delivery_ID,
       revision: serialCount[0].dataValues.Count,
     });
@@ -362,6 +364,10 @@ export const getPage = async (req, res) => {
       limit: 6,
       offset: pageNumber * 6,
       distinct: true,
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
     });
 
     res.status(200).json(forms);
@@ -380,26 +386,13 @@ export const getFiltered = async (req, res) => {
 
   if (!isEmptyObject(queryParams)) {
     let condition = {
-      where: {},
+      where: { ...queryParams },
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
       distinct: true,
     };
-    if (queryParams.account) {
-      condition.where.Customer_ID = queryParams.account;
-    }
-
-    if (queryParams.reference) {
-      condition.where.reference = `${queryParams.reference}`;
-    }
-
-    if (queryParams.customer) {
-      condition.where.customerInquiryNum = `${queryParams.customer}`;
-    }
-    if (queryParams.date) {
-      let new_date = new Date(queryParams.date);
-      condition.where.day = new_date.getDate();
-      condition.where.month = new_date.getMonth() + 1;
-      condition.where.year = new_date.getFullYear();
-    }
 
     try {
       const customers = await Models.QuotationForm.findAndCountAll(condition);
