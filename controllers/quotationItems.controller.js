@@ -131,21 +131,13 @@ export const getByQuotAndID = async (req, res) => {
   try {
     const retval = await Models.QuotationItem.findAll({
       where: {
-        [Op.or]: {
-          Quotation_ID: items.item_id,
-        },
-        [Op.or]: {
-          Customer_ID: items.Customer_ID,
-        },
+        [Op.or]: [
+          { Quotation_ID: items.item_id },
+          { Customer_ID: items.Customer_ID, isUsed: false },
+        ],
       },
-      include: [
-        Models.StraigthBush,
-        Models.BracketBush,
-        Models.PlateStrip,
-        Models.DoubleBracketBush,
-        Models.MiddleBracketBush,
-        Models.Analyze,
-      ],
+      order: [["createdAt", "DESC"]],
+      include: [Models.Analyze],
     });
 
     res.status(200).json(retval);
