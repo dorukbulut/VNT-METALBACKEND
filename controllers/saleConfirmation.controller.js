@@ -132,6 +132,7 @@ export const generateForm = async (req, res) => {
       specials: Data.dataValues.specialOffers,
       order_date: Data.dataValues.OrderDate,
       delivery_date: Data.dataValues.deliveryDate,
+      currency: quot_item[0].currency,
       customer_reference: Data.dataValues.customerReference,
       items: quot_item.map((item, key) => {
         return {
