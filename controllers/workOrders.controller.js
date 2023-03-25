@@ -23,6 +23,7 @@ const create = async (new_order) => {
     day: parseInt(new Date().getDate()),
     month: parseInt(new Date().getMonth() + 1),
     revision: 0,
+    updatedAt: new Date(),
     reference: `WORN-${
       new_order.options.Customer_ID
     }-${new Date().getFullYear()}-${
@@ -48,6 +49,7 @@ const update = async (order) => {
     year: parseInt(new Date().getFullYear()),
     day: parseInt(new Date().getDate()),
     month: parseInt(new Date().getMonth() + 1),
+    updatedAt: new Date(),
     revision: serialCount[0].dataValues.Count,
   });
 };
@@ -89,6 +91,10 @@ export const getWorkOrder = async (req, res) => {
           Customer_ID: items.Customer_ID,
         },
       },
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
       include: [
         {
           model: Models.QuotationItem,
@@ -154,6 +160,10 @@ export const getAllWorkOrder = async (req, res) => {
           model: Models.Customer,
         },
       ],
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
     });
 
     res.status(200).json(retval);
@@ -215,7 +225,6 @@ export const generateWorkOrder = async (req, res) => {
             ? "Var"
             : "Yok",
           hasPackage: retval.dataValues.sale_confirmation.package,
-          company: retval.dataValues.company,
           certificates: retval.dataValues.sale_confirmation.certificates.map(
             (item) => {
               return {
@@ -280,7 +289,7 @@ export const generateWorkOrder = async (req, res) => {
             ? "Var"
             : "Yok",
           hasPackage: retval1.dataValues.sale_confirmation.package,
-          company: retval1.dataValues.company,
+          company: retval1.dataValues.company === "VNT" ? "vnt" : "bilgesin",
           certificates: retval1.dataValues.sale_confirmation.certificates.map(
             (item) => {
               return {
@@ -346,7 +355,7 @@ export const generateWorkOrder = async (req, res) => {
             ? "Var"
             : "Yok",
           hasPackage: retval2.dataValues.sale_confirmation.package,
-          company: retval2.dataValues.company,
+          company: retval2.dataValues.company === "VNT" ? "vnt" : "bilgesin",
           certificates: retval2.dataValues.sale_confirmation.certificates.map(
             (item) => {
               return {
@@ -411,6 +420,7 @@ export const generateWorkOrder = async (req, res) => {
           calc_weigth: retval3.dataValues.quotationItem.calcRaw,
           treament_firm: retval3.dataValues.quotationItem.treatment_firm,
           model_firm: retval3.dataValues.quotationItem.model_firm,
+          company: retval3.dataValues.company === "VNT" ? "vnt" : "bilgesin",
           packaging: retval3.dataValues.sale_confirmation.package
             ? "Var"
             : "Yok",
@@ -485,7 +495,7 @@ export const generateWorkOrder = async (req, res) => {
             ? "Var"
             : "Yok",
           hasPackage: retval4.dataValues.sale_confirmation.package,
-          company: retval4.dataValues.company,
+          company: retval4.dataValues.company === "VNT" ? "vnt" : "bilgesin",
           certificates: retval4.dataValues.sale_confirmation.certificates.map(
             (item) => {
               return {
@@ -537,32 +547,11 @@ export const getPage = async (req, res) => {
     const forms = await Models.WorkOrder.findAndCountAll({
       limit: 6,
       offset: pageNumber * 6,
-      include: [
-        {
-          model: Models.QuotationItem,
-          include: [
-            Models.Analyze,
-            Models.BracketBush,
-            Models.StraigthBush,
-            Models.PlateStrip,
-            Models.DoubleBracketBush,
-            Models.MiddleBracketBush,
-          ],
-        },
-        {
-          model: Models.SaleConfirmation,
-          include: [
-            {
-              model: Models.QuotationForm,
-              include: [Models.DeliveryType],
-            },
-            Models.Certificate,
-          ],
-        },
-        {
-          model: Models.Customer,
-        },
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
       ],
+      include: [Models.QuotationItem],
       distinct: true,
     });
 
@@ -583,6 +572,11 @@ export const getByWorkOrder = async (req, res) => {
           workorder_ID: items.workorder_ID,
         },
       },
+      include: [Models.QuotationItem],
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
       include: [
         {
           model: Models.QuotationItem,
@@ -626,80 +620,13 @@ export const getFiltered = async (req, res) => {
   const queryParams = { ...req.query };
   if (!isEmptyObject(queryParams)) {
     let condition = {
-      where: {},
-      include: [
-        {
-          model: Models.QuotationItem,
-          include: [
-            Models.Analyze,
-            Models.BracketBush,
-            Models.StraigthBush,
-            Models.PlateStrip,
-            Models.DoubleBracketBush,
-            Models.MiddleBracketBush,
-          ],
-        },
-        {
-          model: Models.SaleConfirmation,
-          include: [
-            {
-              model: Models.QuotationForm,
-              include: [Models.DeliveryType],
-            },
-            Models.Certificate,
-          ],
-        },
-        {
-          model: Models.Customer,
-        },
+      where: { ...queryParams },
+      include: [Models.QuotationItem],
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
       ],
     };
-    if (queryParams.account) {
-      condition.where.Customer_ID = queryParams.account;
-    }
-
-    if (queryParams.workReference) {
-      condition.where.reference = queryParams.workReference;
-    }
-
-    if (queryParams.saleReference) {
-      condition.include = [
-        {
-          model: Models.QuotationItem,
-          include: [
-            Models.Analyze,
-            Models.BracketBush,
-            Models.StraigthBush,
-            Models.PlateStrip,
-            Models.DoubleBracketBush,
-            Models.MiddleBracketBush,
-          ],
-        },
-        {
-          model: Models.SaleConfirmation,
-          where: {
-            reference: { [Op.like]: `%${queryParams.saleReference}%` },
-          },
-          include: [
-            {
-              model: Models.QuotationForm,
-              include: [Models.DeliveryType],
-            },
-            Models.Certificate,
-          ],
-        },
-        {
-          model: Models.Customer,
-        },
-      ];
-    }
-    if (queryParams.date) {
-      let new_date = new Date(queryParams.date);
-      condition.where.day = new_date.getDate();
-      condition.where.month = new_date.getMonth() + 1;
-      condition.where.year = new_date.getFullYear();
-    }
-
     try {
       const customers = await Models.WorkOrder.findAndCountAll(condition);
       res.status(200).json(customers);

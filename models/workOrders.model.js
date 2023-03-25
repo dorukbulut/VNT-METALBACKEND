@@ -19,6 +19,9 @@ const WorkOrders = db.define(
       type: Sequelize.STRING,
       allowNull: false,
     },
+    updatedAt: {
+      type: Sequelize.DATE,
+    },
 
     revision: {
       type: Sequelize.INTEGER,
