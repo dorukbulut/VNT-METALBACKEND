@@ -20,6 +20,10 @@ const SaleConfirmation = db.define(
       allowNull: false,
     },
 
+    updatedAt: {
+      type: Sequelize.DATE,
+    },
+
     customerReference: {
       type: Sequelize.STRING,
     },

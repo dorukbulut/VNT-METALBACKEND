@@ -158,6 +158,11 @@ export const getForms = async (req, res) => {
           Customer_ID: items.Customer_ID,
         },
       },
+      limit: 100,
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
       include: [
         {
           model: Models.QuotationItem,
@@ -204,6 +209,10 @@ export const getAllForms = async (req, res) => {
           model: Models.Customer,
           model: Models.DeliveryType,
         },
+      ],
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
       ],
     });
 
@@ -326,6 +335,10 @@ export const getByQuotation = async (req, res) => {
       where: {
         quotation_ID: items.quotation_ID,
       },
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
       include: [
         {
           model: Models.QuotationItem,

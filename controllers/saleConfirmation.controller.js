@@ -27,6 +27,7 @@ export const createForm = async (req, res) => {
       day: parseInt(new Date().getDate()),
       month: parseInt(new Date().getMonth() + 1),
       revision: 0,
+      updatedAt: new Date(),
       reference: `ORN-${
         new_confirmation.options.Customer_ID
       }-${new Date().getFullYear()}-${
@@ -66,6 +67,7 @@ export const updateForm = async (req, res) => {
       day: parseInt(new Date().getDate()),
       month: parseInt(new Date().getMonth() + 1),
       revision: serialCount[0].dataValues.Count,
+      updatedAt: new Date(),
     });
 
     const new_arr = new_confirmation.cert_options.map((item) => {
@@ -153,7 +155,13 @@ export const generateForm = async (req, res) => {
         };
       }),
       delivery_type: Data.dataValues.quotation_form.delivery_type.name,
-      packaging: Data.dataValues.package,
+      packaging: Data.dataValues.package
+        ? Data.dataValues.language === "English"
+          ? "yes"
+          : "var"
+        : Data.dataValues.language === "English"
+        ? "no"
+        : "yok",
       company: Data.dataValues.company === "VNT" ? "vnt" : "bilgesin",
       language: Data.dataValues.language === "English" ? "eng" : "tr",
       hasPackage: Data.dataValues.package,
@@ -210,6 +218,10 @@ export const getByConfirmation = async (req, res) => {
       where: {
         sale_ID: items.sale_ID,
       },
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
       include: [
         {
           model: Models.QuotationItem,
@@ -254,6 +266,10 @@ export const getForms = async (req, res) => {
           Customer_ID: items.Customer_ID,
         },
       },
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
       include: [
         {
           model: Models.QuotationItem,
@@ -315,6 +331,10 @@ export const getAll = async (req, res) => {
           model: Models.Customer,
         },
       ],
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
+      ],
     });
 
     res.status(200).json(retval);
@@ -330,10 +350,9 @@ export const getPage = async (req, res) => {
       limit: 6,
       offset: pageNumber * 6,
       distinct: true,
-      include: [
-        {
-          model: Models.QuotationForm,
-        },
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
       ],
     });
 
@@ -352,37 +371,13 @@ export const getFiltered = async (req, res) => {
   const queryParams = { ...req.query };
   if (!isEmptyObject(queryParams)) {
     let condition = {
-      where: {},
-      include: [
-        {
-          model: Models.QuotationForm,
-        },
+      where: { ...queryParams },
+      order: [
+        ["updatedAt", "DESC"],
+        ["revision", "ASC"],
       ],
+      distinct: true,
     };
-    if (queryParams.account) {
-      condition.where.Customer_ID = queryParams.account;
-    }
-
-    if (queryParams.saleReference) {
-      condition.where.reference = queryParams.saleReference;
-    }
-
-    if (queryParams.quotReference) {
-      condition.include = [
-        {
-          model: Models.QuotationForm,
-          where: {
-            reference: `${queryParams.quotReference}`,
-          },
-        },
-      ];
-    }
-    if (queryParams.date) {
-      let new_date = new Date(queryParams.date);
-      condition.where.day = new_date.getDate();
-      condition.where.month = new_date.getMonth() + 1;
-      condition.where.year = new_date.getFullYear();
-    }
 
     try {
       const customers = await Models.SaleConfirmation.findAndCountAll(
