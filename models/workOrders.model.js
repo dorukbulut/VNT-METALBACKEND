@@ -33,6 +33,10 @@ const WorkOrders = db.define(
     treatment_size: {
       type: Sequelize.STRING,
     },
+    status : {
+      type : Sequelize.STRING,
+      defaultValue : "pending"
+    },
     year: {
       type: Sequelize.INTEGER,
     },
