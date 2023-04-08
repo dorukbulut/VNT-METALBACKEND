@@ -13,6 +13,8 @@ import WorkOrder from "./workOrders.model.js";
 import StraigthBush from "./strBush.model.js";
 import DoubleBracketBush from "./DoubleBracketBush.js";
 import MiddleBracketBush from "./MiddleBracketBush.js";
+import ProductHeader from "./productheader.model.js";
+import Products from "./product.model.js";
 
 //Customer-TaxInfo
 Customer.hasOne(TaxInfo, {
@@ -148,6 +150,15 @@ WorkOrder.belongsTo(QuotationItem, {
   foreignKey: "Item_ID",
 });
 
+//WorkOrder-Quotation Item
+WorkOrder.hasOne(ProductHeader, {
+  foreignKey: "WorkOrder_ID",
+});
+
+ProductHeader.belongsTo(WorkOrder, {
+  foreignKey: "WorkOrder_ID",
+});
+
 //WorkOrder-Customer
 Customer.hasMany(WorkOrder, {
   foreignKey: "Customer_ID",
@@ -155,6 +166,15 @@ Customer.hasMany(WorkOrder, {
 
 WorkOrder.belongsTo(Customer, {
   foreignKey: "Customer_ID",
+});
+
+//ProductHeader-Products
+ProductHeader.hasMany(Products, {
+  foreignKey: "ProductHeader_ID",
+});
+
+Products.belongsTo(ProductHeader, {
+  foreignKey: "ProductHeader_ID",
 });
 
 export default {
@@ -173,4 +193,6 @@ export default {
   DeliveryType,
   PlateStrip,
   QuotationForm,
+  ProductHeader,
+  Products,
 };
