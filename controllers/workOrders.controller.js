@@ -173,7 +173,6 @@ export const getAllWorkOrder = async (req, res) => {
   }
 };
 
-
 //DONE
 export const generateWorkOrder = async (req, res) => {
   const item = { ...req.body };
@@ -640,6 +639,25 @@ export const getFiltered = async (req, res) => {
   }
 };
 
+export const setTrue = async (req, res) => {
+  const { id } = req.body;
+  try {
+    const retval = await Models.WorkOrder.update(
+      { isProduct: true },
+      {
+        where: {
+          workorder_ID: id,
+        },
+      }
+    );
+
+    res.status(200).json({ message: "Setted tot true" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured." });
+  }
+};
+
 export default {
   getFiltered,
   getPage,
@@ -650,4 +668,5 @@ export default {
   generateWorkOrder,
   deleteWorkOrder,
   getByWorkOrder,
+  setTrue,
 };

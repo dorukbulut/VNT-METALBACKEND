@@ -5,15 +5,15 @@ function isEmptyObject(obj) {
   return JSON.stringify(obj) === "{}";
 }
 
-
 export const getPage = async (req, res) => {
   const pageNumber = req.params.page;
   try {
     const forms = await Models.WorkOrder.findAndCountAll({
       limit: 6,
       offset: pageNumber * 6,
-      where : {
-          'status' : 'pending'
+      where: {
+        status: "pending",
+        isProduct: true,
       },
       order: [
         ["updatedAt", "DESC"],
@@ -34,7 +34,7 @@ export const getFiltered = async (req, res) => {
   const queryParams = { ...req.query };
   if (!isEmptyObject(queryParams)) {
     let condition = {
-      where: { ...queryParams, 'status' : "pending" },
+      where: { ...queryParams, status: "pending", isProduct: true },
       include: [Models.QuotationItem],
       order: [
         ["updatedAt", "DESC"],
@@ -49,12 +49,11 @@ export const getFiltered = async (req, res) => {
       res.status(500).json({ message: "An Error Occured !" });
     }
   } else {
-    res.redirect("/api/work-order/get-page/0");
+    res.redirect("/api/production-product/get-page/0");
   }
 };
 
 export default {
-    getFiltered,
-    getPage
-
-}
+  getFiltered,
+  getPage,
+};

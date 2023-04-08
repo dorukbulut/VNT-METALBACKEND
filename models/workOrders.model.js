@@ -33,9 +33,9 @@ const WorkOrders = db.define(
     treatment_size: {
       type: Sequelize.STRING,
     },
-    status : {
-      type : Sequelize.STRING,
-      defaultValue : "pending"
+    status: {
+      type: Sequelize.STRING,
+      defaultValue: "pending",
     },
     year: {
       type: Sequelize.INTEGER,
@@ -48,6 +48,10 @@ const WorkOrders = db.define(
     },
     company: {
       type: Sequelize.STRING,
+    },
+    isProduct: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
     },
   },
 

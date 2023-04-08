@@ -12,5 +12,6 @@ router.delete("/delete", workOrdersController.deleteWorkOrder);
 router.post("/get-work", workOrdersController.getByWorkOrder);
 router.get("/get-page/:page", workOrdersController.getPage);
 router.get("/filter", workOrdersController.getFiltered);
+router.post("/set-true", workOrdersController.setTrue);
 
 export default router;
