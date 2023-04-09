@@ -658,6 +658,25 @@ export const setTrue = async (req, res) => {
   }
 };
 
+export const setFalse = async (req, res) => {
+  const { id } = req.body;
+  try {
+    const retval = await Models.WorkOrder.update(
+      { isProduct: false },
+      {
+        where: {
+          workorder_ID: id,
+        },
+      }
+    );
+
+    res.status(200).json({ message: "Setted to false" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "An error occured." });
+  }
+};
+
 export default {
   getFiltered,
   getPage,
@@ -669,4 +688,5 @@ export default {
   deleteWorkOrder,
   getByWorkOrder,
   setTrue,
+  setFalse,
 };
