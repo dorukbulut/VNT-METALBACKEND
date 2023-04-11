@@ -53,7 +53,33 @@ export const getFiltered = async (req, res) => {
   }
 };
 
+export const getProduct = async (req, res) => {
+  const { workorder } = req.body;
+
+  try {
+    const retval = await Models.ProductHeader.findOne({
+      where: {
+        WorkOrder_ID: workorder,
+      },
+      include: [
+        {
+          model: Models.Products,
+        },
+      ],
+    });
+    if (retval) {
+      res.status(200).send(retval);
+    } else {
+      res.status(200).send([]);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(405).send({ message: "Internal Server Error" });
+  }
+};
+
 export default {
   getFiltered,
   getPage,
+  getProduct,
 };
