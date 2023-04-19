@@ -68,6 +68,8 @@ export const getProduct = async (req, res) => {
       ],
     });
     if (retval) {
+      const products = await Models.Products.findAndCountAll();
+      //where -> Product Header id
       res.status(200).send(retval);
     } else {
       res.status(200).send([]);
