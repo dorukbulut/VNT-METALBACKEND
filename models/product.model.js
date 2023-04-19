@@ -26,6 +26,11 @@ const Products = db.define("products", {
     defaultValue: 0,
   },
 
+  sawdust_kg: {
+    type: Sequelize.DECIMAL,
+    defaultValue: 0,
+  },
+
   piece_kg: {
     type: Sequelize.DECIMAL,
     defaultValue: 0,

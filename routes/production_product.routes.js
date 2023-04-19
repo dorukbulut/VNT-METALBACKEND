@@ -6,5 +6,5 @@ import ProductControllers from "../controllers/production_product.controller.js"
 router.get("/get-page/:page", ProductControllers.getPage);
 router.get("/filter", ProductControllers.getFiltered);
 router.post("/get", ProductControllers.getProduct);
-
+router.post("/create", ProductControllers.createProduct);
 export default router;

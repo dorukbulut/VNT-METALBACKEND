@@ -78,8 +78,23 @@ export const getProduct = async (req, res) => {
   }
 };
 
+export const createProduct = async (req, res) => {
+  let new_product = { ...req.body };
+};
+
+export const updateProduct = async (req, res) => {
+  let product = { ...req.body };
+};
+
+export const deleteProduct = async (req, res) => {
+  let product = { ...req.body };
+};
+
 export default {
   getFiltered,
   getPage,
   getProduct,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 };
