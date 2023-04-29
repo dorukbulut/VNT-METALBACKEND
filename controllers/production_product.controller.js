@@ -1,6 +1,6 @@
 import Models from "../models/index.js";
 import Sequelize, { Model, Op } from "sequelize";
-
+import { generateReference } from "../utils/generateReference.js";
 function isEmptyObject(obj) {
   return JSON.stringify(obj) === "{}";
 }
@@ -57,20 +57,35 @@ export const getProduct = async (req, res) => {
   const { workorder } = req.body;
 
   try {
-    const retval = await Models.ProductHeader.findOne({
+    const productHeader = await Models.ProductHeader.findOne({
       where: {
         WorkOrder_ID: workorder,
       },
       include: [
         {
           model: Models.Products,
+          attributes: [
+            "step",
+            "charge_number",
+            "n_piece",
+            "piece_kg",
+            "total_kg",
+            "isQC",
+            "preparedBy",
+          ],
         },
       ],
     });
-    if (retval) {
-      const products = await Models.Products.findAndCountAll();
-      //where -> Product Header id
-      res.status(200).send(retval);
+    if (productHeader) {
+      const workOrder = await Models.WorkOrder.findOne({
+        where: { workorder_ID: workorder },
+        include: [
+          { model: Models.QuotationItem, include: [{ model: Models.Analyze }] },
+        ],
+      });
+      const analyze = workOrder.quotationItem.analyze.dataValues.analyze_Name;
+      const customer = workOrder.dataValues.Customer_ID;
+      res.status(200).send({ productHeader, analyze, customer });
     } else {
       res.status(200).send([]);
     }
@@ -81,7 +96,72 @@ export const getProduct = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
-  let new_product = { ...req.body };
+  try {
+    let new_product = { ...req.body };
+    // Find the product header
+    let productHeader = await Models.ProductHeader.findOne({
+      where: { WorkOrder_ID: new_product.WorkOrder_ID },
+    });
+
+    // Update the product header
+    if (productHeader) {
+      productHeader.n_piece =
+        parseInt(productHeader.n_piece) + parseInt(new_product.n_piece);
+      productHeader.total_kg =
+        parseFloat(productHeader.total_kg) +
+        parseFloat(new_product.n_piece) * parseFloat(new_product.piece_kg) +
+        parseFloat(new_product.extra_kg) +
+        parseFloat(new_product.sawdust_kg);
+      productHeader.n_remaining =
+        parseInt(productHeader.n_remaining) - parseInt(new_product.n_piece);
+      await productHeader.save();
+    } else {
+      // Find the Item
+      const workOrder = await Models.WorkOrder.findOne({
+        where: { workorder_ID: new_product.WorkOrder_ID },
+        include: [{ model: Models.QuotationItem }],
+      });
+
+      // Create Product Header
+      const reference = generateReference();
+      productHeader = await Models.ProductHeader.create({
+        reference,
+        total_kg:
+          parseFloat(new_product.n_piece) * parseFloat(new_product.piece_kg) +
+          parseFloat(new_product.extra_kg) +
+          parseFloat(new_product.sawdust_kg),
+        n_remaining:
+          workOrder.quotationItem.dataValues.unit_frequence -
+          new_product.n_piece,
+        n_piece: parseInt(new_product.n_piece),
+        WorkOrder_ID: new_product.WorkOrder_ID,
+      });
+    }
+
+    // Create the product record
+    delete new_product.WorkOrder_ID;
+    const productCount = await Models.Products.count({
+      where: {
+        ProductHeader_ID: productHeader.header_id,
+      },
+    });
+
+    const product = await Models.Products.create({
+      ...new_product,
+      step: productCount + 1,
+      total_kg:
+        parseFloat(new_product.n_piece) * parseFloat(new_product.piece_kg) +
+        parseFloat(new_product.extra_kg) +
+        parseFloat(new_product.sawdust_kg),
+      ProductHeader_ID: productHeader.header_id,
+      isQC: false,
+    });
+
+    res.status(200).json({ message: "created record" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
 };
 
 export const updateProduct = async (req, res) => {

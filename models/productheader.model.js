@@ -16,6 +16,10 @@ const ProductHeader = db.define("productheader", {
     allowNull: false,
   },
 
+  isFinished: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
   n_remaining: {
     type: Sequelize.DECIMAL,
   },
