@@ -160,7 +160,7 @@ export const createProduct = async (req, res) => {
         parseFloat(new_product.extra_kg) +
         parseFloat(new_product.sawdust_kg),
       ProductHeader_ID: productHeader.header_id,
-      isQC: false,
+      isQC: "pending",
     });
 
     res.status(200).json({ message: "created record" });
@@ -217,6 +217,7 @@ export const updateProduct = async (req, res) => {
           parseFloat(product.n_piece) * parseFloat(product.piece_kg) +
           parseFloat(product.extra_kg) +
           parseFloat(product.sawdust_kg),
+        isQC: "pending",
       });
 
       await old_product.save();

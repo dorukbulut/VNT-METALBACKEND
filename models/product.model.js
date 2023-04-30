@@ -42,7 +42,7 @@ const Products = db.define("products", {
   },
 
   isQC: {
-    type: Sequelize.BOOLEAN,
+    type: Sequelize.STRING,
   },
 
   tin: {
