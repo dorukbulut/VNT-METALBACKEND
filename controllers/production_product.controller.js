@@ -12,7 +12,6 @@ export const getPage = async (req, res) => {
       limit: 6,
       offset: pageNumber * 6,
       where: {
-        status: "pending",
         isProduct: true,
       },
       order: [
@@ -276,7 +275,6 @@ export const finishProduct = async (req, res) => {
     await Models.WorkOrder.update(
       {
         isProduct: false,
-        status: "completed",
       },
       {
         where: {
