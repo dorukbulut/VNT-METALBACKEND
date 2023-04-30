@@ -55,26 +55,12 @@ export const getFiltered = async (req, res) => {
 
 export const getProduct = async (req, res) => {
   const { workorder } = req.body;
-
+  const pageNumber = req.params.page;
   try {
     const productHeader = await Models.ProductHeader.findOne({
       where: {
         WorkOrder_ID: workorder,
       },
-      include: [
-        {
-          model: Models.Products,
-          attributes: [
-            "step",
-            "charge_number",
-            "n_piece",
-            "piece_kg",
-            "total_kg",
-            "isQC",
-            "preparedBy",
-          ],
-        },
-      ],
     });
     if (productHeader) {
       const workOrder = await Models.WorkOrder.findOne({
@@ -83,9 +69,28 @@ export const getProduct = async (req, res) => {
           { model: Models.QuotationItem, include: [{ model: Models.Analyze }] },
         ],
       });
+      const products = await Models.Products.findAndCountAll({
+        limit: 6,
+        offset: pageNumber * 6,
+        order: [["step", "ASC"]],
+        where: {
+          ProductHeader_ID: productHeader.header_id,
+        },
+        attributes: [
+          "step",
+          "charge_number",
+          "n_piece",
+          "piece_kg",
+          "total_kg",
+          "isQC",
+          "preparedBy",
+        ],
+        distinct: true,
+      });
+
       const analyze = workOrder.quotationItem.analyze.dataValues.analyze_Name;
       const customer = workOrder.dataValues.Customer_ID;
-      res.status(200).send({ productHeader, analyze, customer });
+      res.status(200).send({ productHeader, analyze, customer, products });
     } else {
       res.status(200).send([]);
     }
