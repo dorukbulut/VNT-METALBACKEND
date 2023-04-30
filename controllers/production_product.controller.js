@@ -78,6 +78,7 @@ export const getProduct = async (req, res) => {
         },
         attributes: [
           "step",
+          "product_id",
           "charge_number",
           "n_piece",
           "piece_kg",
@@ -170,18 +171,142 @@ export const createProduct = async (req, res) => {
 };
 
 export const updateProduct = async (req, res) => {
-  let product = { ...req.body };
+  try {
+    let product = { ...req.body };
+    delete product.isQC;
+    delete product.WorkOrder_ID;
+    delete product.step;
+    delete product.total_kg;
+    delete product.createdAt;
+    delete product.updatedAt;
+    const product_id = product.product_id;
+    delete product.product_id;
+
+    // Find the product record
+    const old_product = await Models.Products.findByPk(product_id);
+
+    // Find the product header
+    const productHeader = await Models.ProductHeader.findOne({
+      where: { header_id: old_product.ProductHeader_ID },
+    });
+
+    if (old_product && productHeader) {
+      //Update the product header
+      productHeader.n_piece =
+        parseInt(productHeader.n_piece) +
+        parseInt(product.n_piece) -
+        parseInt(old_product.n_piece);
+      productHeader.total_kg =
+        parseFloat(productHeader.total_kg) +
+        (parseFloat(product.n_piece) * parseFloat(product.piece_kg) +
+          parseFloat(product.extra_kg) +
+          parseFloat(product.sawdust_kg)) -
+        (parseFloat(old_product.n_piece) * parseFloat(old_product.piece_kg) +
+          parseFloat(old_product.extra_kg) +
+          parseFloat(old_product.sawdust_kg));
+      productHeader.n_remaining =
+        parseInt(productHeader.n_remaining) -
+        parseInt(product.n_piece) +
+        parseInt(old_product.n_piece);
+      await productHeader.save();
+
+      //Update the record
+      await old_product.update({
+        ...product,
+        total_kg:
+          parseFloat(product.n_piece) * parseFloat(product.piece_kg) +
+          parseFloat(product.extra_kg) +
+          parseFloat(product.sawdust_kg),
+      });
+
+      await old_product.save();
+      res.status(200).json({ message: "Updated Record" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(405).json({ message: "Server Error" });
+  }
 };
 
 export const deleteProduct = async (req, res) => {
-  let product = { ...req.body };
+  try {
+    let { product_id } = req.body;
+    //Find the product
+    const product = await Models.Products.findByPk(product_id);
+    //Update the product header
+    const productHeader = await Models.ProductHeader.findOne({
+      where: { header_id: product.ProductHeader_ID },
+    });
+    productHeader.n_piece =
+      parseInt(productHeader.n_piece) - parseInt(product.n_piece);
+    productHeader.total_kg =
+      parseFloat(productHeader.total_kg) -
+      (parseFloat(product.n_piece) * parseFloat(product.piece_kg) +
+        parseFloat(product.extra_kg) +
+        parseFloat(product.sawdust_kg));
+    productHeader.n_remaining =
+      parseInt(productHeader.n_remaining) + parseInt(product.n_piece);
+    await productHeader.save();
+
+    //Delete record
+    await product.destroy();
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(405).json({ message: "Server Error" });
+  }
+};
+
+export const getProductByid = async (req, res) => {
+  try {
+    const { product_id } = req.body;
+    //Find the product
+    const product = await Models.Products.findByPk(product_id);
+    res.status(200).send(product);
+  } catch (err) {
+    console.error(err);
+    res.status(405).json({ message: "Server Error" });
+  }
+};
+
+export const finishProduct = async (req, res) => {
+  try {
+    const { workorder_ID } = req.body;
+    await Models.WorkOrder.update(
+      {
+        isProduct: false,
+        status: "completed",
+      },
+      {
+        where: {
+          workorder_ID,
+        },
+      }
+    );
+
+    await Models.ProductHeader.update(
+      { isFinished: true },
+      {
+        where: {
+          WorkOrder_ID: workorder_ID,
+        },
+      }
+    );
+
+    res.status(200).json({ message: "Production Finished" });
+  } catch (err) {
+    console.error(err);
+    res.status(405).json({ message: "Server Error" });
+  }
 };
 
 export default {
   getFiltered,
+  finishProduct,
   getPage,
   getProduct,
   createProduct,
   updateProduct,
+  getProductByid,
   deleteProduct,
 };
