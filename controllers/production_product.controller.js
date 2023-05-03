@@ -33,7 +33,7 @@ export const getFiltered = async (req, res) => {
   const queryParams = { ...req.query };
   if (!isEmptyObject(queryParams)) {
     let condition = {
-      where: { ...queryParams, status: "pending", isProduct: true },
+      where: { ...queryParams, isProduct: true },
       include: [Models.QuotationItem],
       order: [
         ["updatedAt", "DESC"],

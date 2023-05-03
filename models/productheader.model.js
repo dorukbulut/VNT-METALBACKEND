@@ -20,6 +20,10 @@ const ProductHeader = db.define("productheader", {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
+  isAtelierFinished: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
   n_remaining: {
     type: Sequelize.DECIMAL,
   },
