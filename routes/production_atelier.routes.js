@@ -5,5 +5,5 @@ import AtelierControllers from "../controllers/production_atelier.controller.js"
 //CRUD ROUTES
 router.get("/get-page/:page", AtelierControllers.getPage);
 router.get("/filter", AtelierControllers.getFiltered);
-
+router.post("/get/:page", AtelierControllers.getProduct);
 export default router;
