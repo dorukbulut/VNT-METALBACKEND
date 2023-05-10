@@ -15,6 +15,7 @@ import DoubleBracketBush from "./DoubleBracketBush.js";
 import MiddleBracketBush from "./MiddleBracketBush.js";
 import ProductHeader from "./productheader.model.js";
 import Products from "./product.model.js";
+import Process from "./atelier.model.js";
 
 //Customer-TaxInfo
 Customer.hasOne(TaxInfo, {
@@ -177,6 +178,24 @@ Products.belongsTo(ProductHeader, {
   foreignKey: "ProductHeader_ID",
 });
 
+//ProductHeader-Atelier
+ProductHeader.hasMany(Process, {
+  foreignKey: "ProductHeader_ID",
+});
+
+Process.belongsTo(ProductHeader, {
+  foreignKey: "ProductHeader_ID",
+});
+
+//Atelier-Products
+Products.hasMany(Process, {
+  foreignKey : "Product_ID",
+});
+
+Process.belongsTo(Products, {
+  foreignKey : "Product_ID",
+});
+
 export default {
   TaxInfo,
   WorkOrder,
@@ -195,4 +214,5 @@ export default {
   QuotationForm,
   ProductHeader,
   Products,
+  Process,
 };
