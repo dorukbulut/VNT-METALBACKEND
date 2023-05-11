@@ -91,30 +91,12 @@ export const getProduct = async (req, res) => {
       const WorkOrderReference =
         workOrder.reference + "-REV-" + workOrder.revision.toString();
       const customer = workOrder.dataValues.Customer_ID;
-      const ateliers = await Models.Process.findAndCountAll({
-        limit: 6,
-        offset: pageNumber * 6,
-        order: [["step", "ASC"]],
-        where: {
-          ProductHeader_ID: productHeader.header_id,
-        },
-        attributes: [
-          "step",
-          "atelier_id",
-          "n_piece",
-          "total_kg",
-          "atelier_dims",
-          "isQC",
-          "preparedBy",
-        ],
-        distinct: true,
-      })
+
       res.status(200).send({
         productHeader,
         analyze,
         customer,
         products,
-        ateliers,
         WorkOrderReference,
       });
     } else {
@@ -126,6 +108,42 @@ export const getProduct = async (req, res) => {
   }
 };
 
+export const getAtelier = async (req, res) => {
+  try {
+    const { workorder } = req.body;
+    const pageNumber   = req.params.page;
+    const productHeader = await Models.ProductHeader.findOne({
+      where: {
+        WorkOrder_ID: workorder,
+      },
+    });
+    const ateliers = await Models.Process.findAndCountAll({
+      limit: 6,
+      offset: pageNumber * 6,
+      order: [["step", "ASC"]],
+      where: {
+        ProductHeader_ID: productHeader.header_id,
+      },
+      include : [{model : Models.Products, attributes : ["step"]}],
+      attributes: [
+        "step",
+        "atelier_id",
+        "n_piece",
+        "total_kg",
+        "atelier_dims",
+        "isQC",
+        "atelier_id",
+        "preparedBy",
+      ],
+      distinct: true,
+    });
+
+    res.status(200).send({ateliers});
+  }catch (e) {
+    console.log(e);
+    res.status(405).json({message : "Server Error"});
+  }
+};
 export const createProduct = async (req, res) => {
   try {
     let new_product = { ...req.body };
@@ -150,57 +168,35 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
-    let product = { ...req.body };
-    delete product.isQC;
-    delete product.WorkOrder_ID;
-    delete product.step;
-    delete product.total_kg;
-    delete product.createdAt;
-    delete product.updatedAt;
-    const product_id = product.product_id;
-    delete product.product_id;
+    let atelier = { ...req.body };
 
-    // Find the product record
-    const old_product = await Models.Products.findByPk(product_id);
 
-    // Find the product header
-    const productHeader = await Models.ProductHeader.findOne({
-      where: { header_id: old_product.ProductHeader_ID },
+    // Find the atelier record
+    const old_atelier = await Models.Process.findByPk(atelier.atelier_id);
+    //Update the record
+    await old_atelier.update({
+      ...atelier.values,
+      isQC: "pending",
     });
 
-    if (old_product && productHeader) {
-      //Update the product header
-      productHeader.n_piece =
-          parseInt(productHeader.n_piece) +
-          parseInt(product.n_piece) -
-          parseInt(old_product.n_piece);
-      productHeader.total_kg =
-          parseFloat(productHeader.total_kg) +
-          (parseFloat(product.n_piece) * parseFloat(product.piece_kg) +
-              parseFloat(product.extra_kg) +
-              parseFloat(product.sawdust_kg)) -
-          (parseFloat(old_product.n_piece) * parseFloat(old_product.piece_kg) +
-              parseFloat(old_product.extra_kg) +
-              parseFloat(old_product.sawdust_kg));
-      productHeader.n_remaining =
-          parseInt(productHeader.n_remaining) -
-          parseInt(product.n_piece) +
-          parseInt(old_product.n_piece);
-      await productHeader.save();
+    await old_atelier.save();
+    res.status(200).json({ message: "Updated Record" });
 
-      //Update the record
-      await old_product.update({
-        ...product,
-        total_kg:
-            parseFloat(product.n_piece) * parseFloat(product.piece_kg) +
-            parseFloat(product.extra_kg) +
-            parseFloat(product.sawdust_kg),
-        isQC: "pending",
-      });
 
-      await old_product.save();
-      res.status(200).json({ message: "Updated Record" });
-    }
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(405).json({ message: "Server Error" });
+  }
+};
+
+export const getAtelierid = async (req, res) => {
+  try {
+    const { atelier_id } = req.body;
+    //Find the product
+    const product = await Models.Process.findByPk(atelier_id);
+    res.status(200).send(product);
   } catch (err) {
     console.error(err);
     res.status(405).json({ message: "Server Error" });
@@ -211,6 +207,8 @@ export default {
   getPage,
   getFiltered,
   getProduct,
+  getAtelier,
   createProduct,
   updateProduct,
+  getAtelierid,
 };
