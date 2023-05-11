@@ -72,7 +72,7 @@ export const getProduct = async (req, res) => {
         where: {
           ProductHeader_ID: productHeader.header_id,
           isQC: "accepted",
-          atelier: "İç Atölye",
+          atelier: {[Op.or] : ["İç Atölye", "Dış Atölye"]},
         },
         attributes: [
           "step",
@@ -127,6 +127,7 @@ export const getAtelier = async (req, res) => {
       include : [{model : Models.Products, attributes : ["step"]}],
       attributes: [
         "step",
+        "Product_ID",
         "atelier_id",
         "n_piece",
         "total_kg",
