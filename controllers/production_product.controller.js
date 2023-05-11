@@ -299,6 +299,35 @@ export const finishProduct = async (req, res) => {
   }
 };
 
+
+export const returnMaxItem = async (req, res) => {
+  try{
+    const { workorder } = req.body;
+
+    let productHeader = await Models.ProductHeader.findOne({
+      where: { WorkOrder_ID: workorder },
+    });
+
+    if(productHeader) {
+        res.status(200).send({max_item : productHeader.n_remaining});
+    } else {
+      const workOrder = await Models.WorkOrder.findOne({
+        where: { workorder_ID: workorder },
+        include: [{ model: Models.QuotationItem }],
+      });
+
+
+      res.status(200).send({max_item : workOrder.quotationItem.dataValues.unit_frequence});
+    }
+
+
+
+  }
+  catch (e) {
+    console.log(e);
+    res.status(405).json({message : "Server Error"});
+  }
+}
 export default {
   getFiltered,
   finishProduct,
@@ -308,4 +337,5 @@ export default {
   updateProduct,
   getProductByid,
   deleteProduct,
+  returnMaxItem,
 };

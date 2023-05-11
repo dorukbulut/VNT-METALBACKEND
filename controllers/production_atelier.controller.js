@@ -86,6 +86,17 @@ export const getProduct = async (req, res) => {
         ],
         distinct: true,
       });
+      const allProducts = await Models.Products.findAndCountAll({
+        where: {
+          ProductHeader_ID: productHeader.header_id,
+          atelier: {[Op.or] : ["İç Atölye", "Dış Atölye"]},
+        },
+        attributes: [
+          "n_piece",
+        ],
+        distinct: true,
+      });
+      const sum = allProducts.rows.reduce((prev, curr) => prev + parseInt(curr.dataValues.n_piece), 0)
 
       const analyze = workOrder.quotationItem.analyze.dataValues.analyze_Name;
       const WorkOrderReference =
@@ -97,6 +108,7 @@ export const getProduct = async (req, res) => {
         analyze,
         customer,
         products,
+        sum,
         WorkOrderReference,
       });
     } else {

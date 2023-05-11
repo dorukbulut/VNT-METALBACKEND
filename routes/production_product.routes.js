@@ -11,4 +11,5 @@ router.post("/update", ProductControllers.updateProduct);
 router.post("/delete", ProductControllers.deleteProduct);
 router.post("/finish", ProductControllers.finishProduct);
 router.post("/getid", ProductControllers.getProductByid);
+router.post("/max-item", ProductControllers.returnMaxItem);
 export default router;
