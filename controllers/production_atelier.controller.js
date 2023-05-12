@@ -246,6 +246,25 @@ export const returnMaxItem = async (req, res) => {
   }
 }
 
+export const finishAtelier = async (req, res) => {
+  try {
+    const { workorder_ID } = req.body;
+    await Models.ProductHeader.update(
+        { isAtelierFinished: true },
+        {
+          where: {
+            WorkOrder_ID: workorder_ID,
+          },
+        }
+    );
+
+    res.status(200).json({ message: "Atelier Finished" });
+  } catch (err) {
+    console.error(err);
+    res.status(405).json({ message: "Server Error" });
+  }
+};
+
 export default {
   getPage,
   getFiltered,
@@ -255,4 +274,5 @@ export default {
   updateProduct,
   getAtelierid,
   returnMaxItem,
+  finishAtelier,
 };

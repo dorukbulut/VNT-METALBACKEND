@@ -12,4 +12,5 @@ router.post("/create", AtelierControllers.createProduct);
 router.post("/update", AtelierControllers.updateProduct);
 router.post("/getid", AtelierControllers.getAtelierid);
 router.post("/max-item", AtelierControllers.returnMaxItem);
+router.post("/finish", AtelierControllers.finishAtelier);
 export default router;
