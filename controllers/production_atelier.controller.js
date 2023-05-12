@@ -216,6 +216,36 @@ export const getAtelierid = async (req, res) => {
   }
 };
 
+
+export const returnMaxItem = async (req, res) => {
+  try{
+    const { product_id } = req.body;
+    const product = await Models.Products.findByPk(product_id);
+    const atelier = await Models.Process.findAndCountAll({
+      where : {
+        Product_ID : product_id,
+      }
+    });
+
+    if (atelier) {
+      const sum = atelier.rows.reduce((prev, curr) => prev + parseInt(curr.dataValues.n_piece), 0)
+
+      res.status(200).send({
+        max_item : product.n_piece - sum
+      })
+
+    } else {
+      res.status(200).send({
+        max_item : product.n_piece,
+      })
+    }
+  }
+  catch (e) {
+    console.log(e);
+    res.status(405).json({message : "Server Error"});
+  }
+}
+
 export default {
   getPage,
   getFiltered,
@@ -224,4 +254,5 @@ export default {
   createProduct,
   updateProduct,
   getAtelierid,
+  returnMaxItem,
 };
