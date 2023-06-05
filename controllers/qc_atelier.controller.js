@@ -10,9 +10,9 @@ export const getPage = async (req, res) => {
         const data = await Models.Process.findAndCountAll({
             limit: 6,
             offset: pageNumber * 6,
-            attributes : ["product_id", "step", "isQC", "createdAt"],
+            attributes : ["atelier_id", "step", "isQC", "createdAt"],
             order: [["updatedAt", "DESC"]],
-            include : [{model : Models.ProductHeader, attributes : ["reference"]}],
+            include : [{model : Models.ProductHeader, attributes : ["reference"]}, {model : Models.Products, attributes : ["step"]}],
             distinct: true,
         });
 
@@ -34,16 +34,16 @@ export const getFiltered = async (req, res) => {
             });
             if(productHeader) {
                 let condition = {
-                    include: [{model : Models.ProductHeader, attributes: ["reference"] }],
+                    include : [{model : Models.ProductHeader, attributes : ["reference"]}, {model : Models.Products, attributes : ["step"]}],
                     where : {
                         ProductHeader_ID : productHeader.header_id,
                     },
-                    attributes : ["product_id", "step", "isQC", "createdAt"],
+                    attributes : ["atelier_id", "step", "isQC", "createdAt"],
                     order: [
                         ["updatedAt", "DESC"],
                     ],
                 };
-                const customers = await Models.Products.findAndCountAll(condition);
+                const customers = await Models.Process.findAndCountAll(condition);
                 res.status(200).json(customers);
             }
 
@@ -60,15 +60,15 @@ export const getFiltered = async (req, res) => {
             res.status(500).json({ message: "An Error Occured !" });
         }
     } else {
-        res.redirect("/api/qc-production/get-page/0");
+        res.redirect("/api/qc-atelier/get-page/0");
     }
 };
 
 
 export const setQC = async (req, res) => {
     try {
-        const {product_id, qcValue} = req.body
-        const product = await Models.Products.findByPk(product_id);
+        const {atelier_id, qcValue} = req.body
+        const product = await Models.Process.findByPk(atelier_id);
 
         await product.update({
             isQC : qcValue,
@@ -80,4 +80,8 @@ export const setQC = async (req, res) => {
         res.status(500).json({"message" : "Server Error"})
     }
 }
-export default {}
+export default {
+    setQC,
+    getFiltered,
+    getPage
+}
