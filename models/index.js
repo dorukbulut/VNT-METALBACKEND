@@ -16,6 +16,7 @@ import MiddleBracketBush from "./MiddleBracketBush.js";
 import ProductHeader from "./productheader.model.js";
 import Products from "./product.model.js";
 import Process from "./atelier.model.js";
+import InventoryHeader from "./inventoryHeader.model.js";
 
 //Customer-TaxInfo
 Customer.hasOne(TaxInfo, {
@@ -214,5 +215,6 @@ export default {
   QuotationForm,
   ProductHeader,
   Products,
+  InventoryHeader,
   Process,
 };

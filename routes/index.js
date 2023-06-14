@@ -10,6 +10,7 @@ import ProductionProductRoutes from "./production_product.routes.js";
 import ProductionAtelierRoutes from "./production_atelier.routes.js";
 import QCProductionRoutes from "./qc_production.routes.js";
 import QCAtelierRoutes from "./qc_atelier.routes.js";
+import ProductionInventoryRoutes from "./production_inventory.routes.js";
 
 //all routes.
 // ORDER MODULE
@@ -22,6 +23,8 @@ router.use("/work-order", WorkOrders);
 // PRODUCTION MODULE
 router.use("/production-product", ProductionProductRoutes);
 router.use("/production-atelier", ProductionAtelierRoutes);
+
+router.use("/production-inventory", ProductionInventoryRoutes);
 
 // QC-MODULE
 router.use("/qc-production", QCProductionRoutes);
