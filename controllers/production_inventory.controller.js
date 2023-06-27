@@ -87,9 +87,54 @@ export const getFiltered = async (req, res) => {
     }
 };
 
+export const UpdateInventory = async (req, res) => {
+    try {
+        let { n_piece, inventory_type, inventory_name } = req.body;
+        let inventory_item = await Models.InventoryHeader.findOne({
+            where : {
+                inventoryType : inventory_type,
+                inventoryName : inventory_name
+            }
+        })
+        let number = parseInt(inventory_item.dataValues.n_remaining) + parseInt(n_piece)
+        await inventory_item.update({
+            n_remaining : number >= 0 ? number  : 0
+        })
+
+        await inventory_item.save();
+        res.status(200).json({ message: "Updated Record" });
+    }
+    catch (e) {
+        console.error(err);
+        res.status(405).json({ message: "Server Error" });
+    }
+}
+
+export const stockInfo = async(req, res) => {
+    try {
+        let { reference } = req.body
+
+        let item  = await Models.InventoryHeader.findOne({
+            where : {
+                reference,
+
+            },
+            attributes :  ["inventoryName", "inventoryType"]
+        })
+
+        res.status(200).json(item);
+    }
+    catch (e) {
+        console.error(err);
+        res.status(405).json({ message: "Server Error" });
+    }
+}
+
 
 export default {
     setInventory,
     getPage,
+    stockInfo,
+    UpdateInventory,
     getFiltered
 }
