@@ -33,6 +33,8 @@ router.use("/qc-atelier", QCAtelierRoutes);
 // REPORT MODULE
 
 // SHIPMENT
+//router.use("/shipment-customer",)
+//router.use("/shipment-packaging",)
 
 // ADMIN DASHBOARD
 

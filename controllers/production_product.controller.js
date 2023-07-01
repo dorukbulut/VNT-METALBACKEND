@@ -119,6 +119,7 @@ export const createProduct = async (req, res) => {
         parseFloat(new_product.sawdust_kg);
       productHeader.n_remaining =
         parseInt(productHeader.n_remaining) - parseInt(new_product.n_piece);
+      productHeader.isAtelierFinished = false
       await productHeader.save();
     } else {
       // Find the Item
@@ -207,6 +208,7 @@ export const updateProduct = async (req, res) => {
         parseInt(productHeader.n_remaining) -
         parseInt(product.n_piece) +
         parseInt(old_product.n_piece);
+      productHeader.isAtelierFinished = false
       await productHeader.save();
 
       //Update the record
