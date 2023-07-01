@@ -11,6 +11,8 @@ import ProductionAtelierRoutes from "./production_atelier.routes.js";
 import QCProductionRoutes from "./qc_production.routes.js";
 import QCAtelierRoutes from "./qc_atelier.routes.js";
 import ProductionInventoryRoutes from "./production_inventory.routes.js";
+import ShipmentCustomerRoutes from "./shipment_customer.routes.js"
+import ShipmentPackagingRoutes from "./shipment_packaging.routes.js"
 
 //all routes.
 // ORDER MODULE
@@ -33,8 +35,8 @@ router.use("/qc-atelier", QCAtelierRoutes);
 // REPORT MODULE
 
 // SHIPMENT
-//router.use("/shipment-customer",)
-//router.use("/shipment-packaging",)
+router.use("/shipment-customer", ShipmentCustomerRoutes)
+router.use("/shipment-packaging", ShipmentPackagingRoutes)
 
 // ADMIN DASHBOARD
 
