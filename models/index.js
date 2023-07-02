@@ -228,7 +228,7 @@ Package.hasMany(Shipments, {
 
 
 //WorkOrder-Quotation Item
-WorkOrder.hasOne(Package, {
+WorkOrder.hasMany(Package, {
   foreignKey: "WorkOrder_ID",
 });
 
