@@ -17,7 +17,8 @@ import ProductHeader from "./productheader.model.js";
 import Products from "./product.model.js";
 import Process from "./atelier.model.js";
 import InventoryHeader from "./inventoryHeader.model.js";
-import User from "./users.model.js";
+import Shipments from "./shipment.model.js"
+import Package from "./package.model.js";
 
 //Customer-TaxInfo
 Customer.hasOne(TaxInfo, {
@@ -198,6 +199,45 @@ Process.belongsTo(Products, {
   foreignKey : "Product_ID",
 });
 
+// test
+//ProductHeader-Atelier
+ProductHeader.hasMany(Shipments, {
+  foreignKey: "ProductHeader_ID",
+});
+
+Shipments.belongsTo(ProductHeader, {
+  foreignKey: "ProductHeader_ID",
+});
+
+//Shipments-Products
+Products.hasMany(Shipments, {
+  foreignKey : "Product_ID",
+});
+
+Shipments.belongsTo(Products, {
+  foreignKey : "Product_ID",
+});
+
+Shipments.belongsTo(Package, {
+  foreignKey : "Package_ID"
+});
+
+Package.hasMany(Shipments, {
+  foreignKey : "Package_ID"
+})
+
+
+//WorkOrder-Quotation Item
+WorkOrder.hasOne(Package, {
+  foreignKey: "WorkOrder_ID",
+});
+
+Package.belongsTo(WorkOrder, {
+  foreignKey: "WorkOrder_ID",
+});
+
+
+
 export default {
   TaxInfo,
   WorkOrder,
@@ -217,5 +257,6 @@ export default {
   ProductHeader,
   Products,
   InventoryHeader,
+  Shipments,
   Process,
 };
