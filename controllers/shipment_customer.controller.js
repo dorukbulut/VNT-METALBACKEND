@@ -58,6 +58,7 @@ export const getAllItems = async (req, res) => {
             where: {
                 WorkOrder_ID: workorder,
             },
+            include : [{model : Models.WorkOrder}]
         });
         const onlyProducts = await Models.Products.findAndCountAll({
 
@@ -79,7 +80,7 @@ export const getAllItems = async (req, res) => {
             distinct: true,
         })
 
-        res.status(200).json({ateliers, onlyProducts});
+        res.status(200).json({ateliers, onlyProducts, productHeader});
     }
 
     catch (e) {
