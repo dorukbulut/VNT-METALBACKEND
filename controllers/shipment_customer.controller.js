@@ -51,4 +51,41 @@ export const getFiltered = async (req, res) => {
     }
 };
 
-export default {getFiltered ,getPage}
+export const getAllItems = async (req, res) => {
+    try {
+        const { workorder } = req.body;
+        const productHeader = await Models.ProductHeader.findOne({
+            where: {
+                WorkOrder_ID: workorder,
+            },
+        });
+        const onlyProducts = await Models.Products.findAndCountAll({
+
+            order: [["step", "ASC"]],
+            where: {
+                ProductHeader_ID: productHeader.header_id,
+                atelier : "Yok"
+            },
+            distinct: true,
+        });
+
+        const ateliers = await Models.Process.findAndCountAll({
+            order: [["step", "ASC"]],
+            where: {
+                ProductHeader_ID: productHeader.header_id,
+
+            },
+            include : [{model : Models.Products}],
+            distinct: true,
+        })
+
+        res.status(200).json({ateliers, onlyProducts});
+    }
+
+    catch (e) {
+        console.log(e)
+        res.status(500).json({ message: "An Error Occured !" });
+    }
+}
+
+export default {getFiltered ,getPage, getAllItems}

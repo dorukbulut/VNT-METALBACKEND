@@ -6,5 +6,6 @@ import ShipmentCustomerController from "../controllers/shipment_customer.control
 
 router.get("/get-page/:page", ShipmentCustomerController.getPage);
 router.get("/filter", ShipmentCustomerController.getFiltered);
+router.post("/get-all", ShipmentCustomerController.getAllItems);
 
 export default router;
