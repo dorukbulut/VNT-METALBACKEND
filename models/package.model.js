@@ -10,6 +10,9 @@ const Package = db.define("packages", {
     },
     reference: {
         type: Sequelize.STRING,
+    }
+    ,description: {
+        type: Sequelize.STRING,
     },
 });
 

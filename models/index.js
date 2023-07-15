@@ -244,6 +244,7 @@ export default {
   DoubleBracketBush,
   MiddleBracketBush,
   StraigthBush,
+  Package,
   SaleConfirmation,
   QuotationItem,
   Customer,
