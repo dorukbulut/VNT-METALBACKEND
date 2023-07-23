@@ -13,6 +13,8 @@ import QCAtelierRoutes from "./qc_atelier.routes.js";
 import ProductionInventoryRoutes from "./production_inventory.routes.js";
 import ShipmentCustomerRoutes from "./shipment_customer.routes.js"
 import ShipmentPackagingRoutes from "./shipment_packaging.routes.js"
+import ReportOrdersRoutes from "./report_orders.routes.js";
+import ReportProductionRoutes from "./report_production.routes.js";
 
 //all routes.
 // ORDER MODULE
@@ -33,7 +35,8 @@ router.use("/qc-production", QCProductionRoutes);
 router.use("/qc-atelier", QCAtelierRoutes);
 
 // REPORT MODULE
-
+router.use("/report-order", ReportOrdersRoutes)
+router.use("/report-production", ReportProductionRoutes)
 // SHIPMENT
 router.use("/shipment-customer", ShipmentCustomerRoutes)
 router.use("/shipment-packaging", ShipmentPackagingRoutes)
